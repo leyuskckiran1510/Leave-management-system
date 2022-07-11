@@ -1,431 +1,173 @@
+//for easy compiling and execution 
+#if 0
+gcc -o ${0}.out $0 -lm && ${0}.out
+rm -f ${0}.out
+#endif
+//can be ingnored if you want to compile and execute separately with gcc
+
+
 //Author:Kiran Raj Dhakal
 //Date:2022/7/11
 //Description:A program to implemet Leave Management System in C 
 //            with file handling and error handling
 //            The program is used to add,delete,modify and display the leaves of the employee
 //            with admin,manager and employee login
-/*
-Application: Employee Management System
-Coded By: Krishna Keshab Chaudhary
-Copyrite at: BESTENGINEERINGPROJECTS.COM
-*/
-#include<graphics.h>
-#include<stdio.h>
-#include<conio.h>
-#include<string.h>
-typedef struct Employee
-{
-char empID[15];
-char fname[20];
-char lname[20];
-int age;
-float bsal;
-long phone;
-} Employee;
-FILE *fp;
-Employee emp;
-char fileName[]="EMP.txt";
-char tempFileName[]="temp.txt";
-/* function used in project */
-void AddEmployee();
-void ListEmployee();
-void SearchEmployee();
-void ModifyEmployee();
-void DeleteEmployee();
-void first();
-char file();
-void main()
-{
-char ch='a';
-int gd=DETECT,gm,x,y;
-initgraph(&gd,&gm,"c:\\turboc3\\bgi");
-clrscr();
-first();
-fp=fopen(fileName,"rb+");
-if(fp==NULL)
-{
-fp=fopen( fileName,"wb+");
-if(fp==NULL)
-{
-printf("Can't Open File");
-exit();
-}
-}
-while(ch!='6')
-{
-ch=file();
-switch(ch)
-{
-case '1':
-AddEmployee();
-break;
-case '2':
-ListEmployee();
-break;
-case '3':
-SearchEmployee();
-break;
-case '4':
-ModifyEmployee();
-break;
-case '5':
-DeleteEmployee();
-break;
-case '6':
-exit(0);
-break;
-default:
-//testcolor(RED+BLINK);
-gotoxy(30,10);
-cprintf("WRONG CHOICE!!!");
-getch();
-break;
-}
-}
-}
-void AddEmployee()
-{
-char another,ch;
-do
-{
-clrscr();
-fseek(fp,0,SEEK_END);
-another='Y';
-gotoxy(25,3);
-//testcolor(RED);
-cprintf("ADD EMPLOYEE RECORD");
-gotoxy(25,6);
-//testcolor(GREEN);
-cprintf("1.ENTER EMPLOYEE ID: ");
-gets(emp.empID);
-gotoxy(25,7);
-cprintf("2.ENTER FIRST NAME OF EMPLOYEE: ");
-gets(emp.fname);
-gotoxy(25,8);
-cprintf("3. ENTER LAST NAME OF EMPLOYEE: ");
-gets(emp.lname);
-gotoxy(25,9);
-cprintf("4. ENTER AGE OF EMPLOYEE: ");
-scanf("%d",&emp.age);
-gotoxy(25,10);
-cprintf("5. ENTER SALARY OF EMPLOYEE: ");
-scanf("%f",&emp.bsal);
-gotoxy(25,11);
-cprintf("6.ENTER PHONE OF EMPLOYEE:");
-scanf("%ld",&emp.phone);
-gotoxy(28,15);
-textcolor(MAGENTA + BLINK);
-cprintf("SAVE CHANGE (y/n)?");
-ch=getch();
-if(ch=='y'||ch=='Y')
-{
-fwrite(&emp,sizeof(emp),1,fp);
-fflush(stdin);
-}
-gotoxy(28,15);
-cprintf("ADD ANOTHER EMPLOYEE(Y/N)?");
-fflush(stdin);
-another=getch();
-fflush(stdin);
-textcolor(WHITE);
-}while(another=='Y'|| another=='y');
-}
-void ListEmployee()
-{
-int i;
-fseek(fp,0,SEEK_SET);
-//testcolor(RED);
-gotoxy(1,1);
-cprintf("LIST OF EMPLOYEE RECORD");
-//testcolor(GREEN);
-gotoxy(1,2);
-cprintf("EMP ID");
-gotoxy(14,2);
-cprintf("FIRST NAME");
-gotoxy(27,2);
-cprintf("LAST NAME");
-gotoxy(40,2);
-cprintf("AGE");
-gotoxy(53,2);
-cprintf("SALARY");
-gotoxy(66,2);
-cprintf("PHONE");
-for(i=1;i<=80;i++)
-{
-//testcolor(YELLOW);
-gotoxy(i,3);
-cprintf("-");
-}
-i=4;
-while(fread(&emp,sizeof(emp),1,fp)==1)
-{
-gotoxy(1,i);
-cprintf("%s",emp.empID);
-gotoxy(14,i);
-cprintf("%s",emp.fname);
-gotoxy(27,i);
-cprintf("%s",emp.lname);
-gotoxy(40,i);
-cprintf("%d",emp.age);
-gotoxy(53,i);
-cprintf("%.2f",emp.bsal);
-gotoxy(66,i);
-cprintf("%ld",emp.phone);
-i++;
-}
-getch();
-}
-void SearchEmployee()
-{
-int i,datafound=0;
-char employeeId[15];
-char another,ch;
-do
-{
-clrscr();
-fseek(fp,0,SEEK_SET);
-gotoxy(1,1);
-textcolor(RED);
-cprintf("SEARCH EMPLOYEE RECORD");
-gotoxy(5,2);
-textcolor(GREEN);
-cprintf("ENTER EMPLOYEE ID: ");
-gets(employeeId);
-while(fread(&emp,sizeof(emp),1,fp)==1)
-{
-if(strcmp(emp.empID,employeeId)==0)
-{
-datafound=1;
-break;
-}
-}
-if(datafound==1)
-{
-textcolor(RED);
-gotoxy(4,4);
-cprintf("RECORD OF EMPLOYEE");
-textcolor(GREEN);
-gotoxy(4,5);
-cprintf("——————–");
-gotoxy(4,6);
-cprintf("EMPLOYEE ID :");
-cprintf("%s",emp.empID);
-gotoxy(4,7);
-cprintf("FIRST NAME :");
-cprintf("%s",emp.fname);
-gotoxy(4,8);
-cprintf("LAST NAME :");
-gotoxy(4,9);
-cprintf("AGE :");
-cprintf("%d",emp.age);
-gotoxy(4,10);
-cprintf("BASIC SALARY :");
-cprintf("%.2f",emp.bsal);
-gotoxy(4,11);
-cprintf("PHONE :");
-cprintf("%ld",emp.phone);
-}
-else
-{
-gotoxy(10,8);
-cprintf("EMPLOYEE NOT FOUND!!!!!");
-}
-gotoxy(25,15);
-textcolor(RED+BLINK);
-cprintf("SEARCH ANOTHER EMPLOYEE(Y/N)?");
-fflush(stdin);
-another=getch();
-fflush(stdin);
-textcolor(WHITE);
-}while(another=='Y'|| another=='y');
-}
-void ModifyEmployee()
-{
-int i, datafound=0,recordNo=0;
-char employeeId[15];
-char another,ch;
-do
-{
-clrscr();
-fseek(fp,0,SEEK_SET);
-rewind(fp);
-gotoxy(1,1);
-textcolor(RED);
-cprintf("MODIFY EMPLOYEE RECORD");
-textcolor(GREEN);
-gotoxy(2,2);
-cprintf("ENTER EMPLOYEE ID TO BE MODIFIED:");
-gets(employeeId);
-while(fread(&emp,sizeof(emp),1,fp)==1)
-{
-if(strcmp(emp.empID,employeeId)==0)
-{
-datafound=1;
-break;
-}
-recordNo++;
-}
-if(datafound==1)
-{
-gotoxy(5,3);
-textcolor(RED);
-cprintf("OLD RECORD IS:");
-gotoxy(5,4);
-textcolor(GREEN);
-cprintf("EMPLOYEE ID :");
-cprintf("%s",emp.empID);
-gotoxy(5,5);
-cprintf("FIRST NAME :");
-cprintf("%s",emp.fname);
-gotoxy(5,6);
-cprintf("LAST NAME :");
-cprintf("%s",emp.lname);
-gotoxy(5,7);
-cprintf("AGE :");
-cprintf("%d",emp.age);
-gotoxy(5,8);
-cprintf("BASIC SALARY :");
-cprintf("%.2f",emp.bsal);
-gotoxy(5,9);
-cprintf("PHONE :");
-cprintf("%ld",emp.phone);
-gotoxy(5,11);
-textcolor(GREEN);
-cprintf("EMPLOYEE ID:");
-gets(emp.empID);
-gotoxy(5,13);
-cprintf("FIRST NAME :");
-gets(emp.fname);
-gotoxy(5,14);
-cprintf("LAST NAME :");
-gets(emp.lname);
-gotoxy(5,15);
-cprintf("AGE :");
-scanf("%d",&emp.age);
-gotoxy(5,16);
-cprintf("BASIC SALARY :");
-scanf("%f",&emp.bsal);
-gotoxy(5,17);
-cprintf("PHONE :");
-scanf("%ld",&emp.phone);
-fseek(fp,sizeof(emp)*(recordNo),SEEK_SET);
-gotoxy(10,19);
 
-if(fwrite(&emp,sizeof(emp),1,fp)==1)
-cprintf("THE RECORD HAS BEEN MODIFIED!!!!!");
-else
-cprintf("EROR DURING MODIFICATION!!!!!");
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<time.h>
+
+
+
+struct employe{
+    int id;
+    char name[20];
+    char dob[20];
+    char phone[20];
+    char email[20];
+    char password[20];
+    char type[20];
+    int leaves;
+    char doj[20];
+};
+
+//struct leaves is used to store the leaves of the employee with 
+//the employee id and date is used to store the date of the leaves
+struct leaves{
+    int id;
+    long int date;
+    
+};
+
+
+//function login() is used to login the user with the given credentials
+//if the user is admin,manager or employee then it will return the user type
+//from user.txt file
+char *login(char *username,char *password){
+    FILE *fp;
+    struct employe e;
+    fp=fopen("user.txt","r");
+    if(fp==NULL){
+        printf("Error in opening file\n");
+        exit(0);
+    }
+    while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+        if(strcmp(username,e.email)==0 && strcmp(password,e.password)==0){
+            fclose(fp);
+            return e.type;
+        }
+    }
+    fclose(fp);
+    return "None";
 }
-else
-{
-gotoxy(10,19);
-cprintf("EMPLOYEE NOT FOUND!!!!!");
+
+//function add_employee() is used to add the employee details to the user.txt file
+//with struct employee as parameter
+void add_employee(struct employe e){
+    FILE *fp;
+    fp=fopen("user.txt","a");
+    if(fp==NULL){
+        printf("Error in opening file\n");
+        exit(0);
+    }
+    fprintf(fp,"%d %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+    fclose(fp);
 }
-gotoxy(10,21);
-textcolor(RED+BLINK);
-cprintf("MODIFY ANOTHER EMPLOYEE(Y/N)?");
-fflush(stdin);
-another=getch();
-fflush(stdin);
-textcolor(WHITE);
-}while(another=='Y'||another=='y');
+
+//function delete_employee() is used to delete the employee details from the user.txt file
+//with struct employee as parameter
+void delete_employee(struct employe e){
+    FILE *fp;
+    FILE *fp1;
+    fp=fopen("user.txt","r");
+    fp1=fopen("temp.txt","w");
+    if(fp==NULL || fp1==NULL){
+        printf("Error in opening file\n");
+        exit(0);
+    }
+    while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+        if(e.id!=e.id){
+            fprintf(fp1,"%d %s %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+        }
+    }
+    fclose(fp);
+    fclose(fp1);
+    remove("user.txt");
+    rename("temp.txt","user.txt");
 }
-void DeleteEmployee()
-{
-int i,datafound=0;
-char employeeId[15];
-FILE *fpTemp;
-char another,ch;
-do
-{
-clrscr();
-fseek(fp,0,SEEK_SET);
-rewind(fp);
-textcolor(RED);
-gotoxy(1,1);
-cprintf("DELETE EMPLOYEE RECORD");
-textcolor(GREEN);
-gotoxy(2,2);
-cprintf("ENTER EMPLOYEE ID TO BE DELETED:");
-gets(employeeId);
-while(fread(&emp,sizeof(emp),1,fp)==1)
-{
-if(strcmp(emp.empID,employeeId)==0)
-{
-datafound=1;
-break;
+
+//function modify_employee() is used to modify the employee details from the user.txt file
+//with struct employee as parameter
+void modify_employee(struct employe e){
+    FILE *fp;
+    fp=fopen("user.txt","r");
+    if(fp==NULL){
+        printf("Error in opening file\n");
+        exit(0);
+    }
+    while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+        if(e.id==e.id){
+            fprintf(fp,"%d %s %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+        }
+    }
+    fclose(fp);
 }
+
+//function display_employee() is used to display the employee details from the user.txt file
+//with struct employee as parameter
+void display_employee(struct employe e){
+    FILE *fp;
+    fp=fopen("user.txt","r");
+    if(fp==NULL){
+        printf("Error in opening file\n");
+        exit(0);
+    }
+    while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+        if(e.id==e.id){
+            printf("%d %s %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+        }
+    }
+    fclose(fp);
 }
-if(datafound==1)
-{
-fpTemp=fopen(tempFileName,"wb");
-rewind(fp);
-while(fread(&emp,sizeof(emp),1,fp)==1)
-{
-if(strcmp(emp.empID,employeeId)!=0)
-fwrite(&emp,sizeof(emp),1,fpTemp);
+
+//function to convert time epoch to date
+char *epoch_to_date(int epoch){
+    char *date;
+    time_t t = epoch;
+    date = ctime(&t);
+    return date;
 }
-fclose(fp);
-fclose(fpTemp);
-remove(fileName);
-rename(tempFileName,fileName);
-fp=fopen(fileName,"rb+");
-gotoxy(6,8);
-cprintf("SUCCESSFULLY DELETED!!!!!");
-}
-else
-{
-gotoxy(2,6);
-cprintf("EMPLOYEE NOT FOUND!!!!!");
-}
-gotoxy(10,20);
-textcolor(RED+BLINK);
-cprintf("DELETE ANOTHER EMPLOYEE(Y/N)?");
-fflush(stdin);
-another=getch();
-fflush(stdin);
-textcolor(WHITE);
-}while(another=='Y'|| another=='y');
-}
-void first()
-{
-int gd=DETECT,gm;
-initgraph(&gd,&gm,"c:\\tc\\bgi");
-setcolor(GREEN);
-settextstyle(4,0,3);
-outtextxy(100,190,"EMPLOYEE INFORMATION SYSTEM");
-//settextcolor(1,0,1);
-setcolor(RED);
-outtextxy(480,350,"DEVELOPED BY:");
-setcolor(BLUE);
-outtextxy(480,370,"BESTENGINEERINGPROJECTS");
-outtextxy(480,400,">>>>>>>>>>");
-getch();
-restorecrtmode();
-}
-char file()
-{
-int gdriver=DETECT, gmod;
-char i;
-initgraph(&gdriver,&gmod,"c:\\tc\\bgi");
-setcolor(RED);
-setcolor(GREEN);
-settextstyle(7,0,2);
-outtextxy(130,45,"EMPLOYEE INFORMATION SYSTEM");
-settextstyle(7,0,3);
-setcolor(YELLOW);
-outtextxy(260,95,"MAIN MENU");
-settextstyle(0,0,0);
-setcolor(MAGENTA);
-outtextxy(200,145,"1>>ADD EMPLOYEE RECORD.");
-outtextxy(200,170,"2>>LIST RECORDS OF ALL EMPLOYEE.");
-outtextxy(200,195,"3>>SEARCH A PARTICULR EMPLOYEE.");
-outtextxy(200,220,"4>>MODIFY INFORMATION OF A EMPLOYEE.");
-outtextxy(200,245,"5>>DELETE A EMPLOYEE.");
-outtextxy(200,270,"6>>EXIT STSTEM.");
-setcolor(GREEN+BLINK);
-outtextxy(200,360,"ENTER YOUR CHOICE: ");
-i=getch();
-restorecrtmode();
-return (i);
+
+//display employee details and leaves of the employee with the employee id
+void display_employee_leaves(int id){
+    FILE *fp;
+    struct employe e;
+    struct leaves l;
+    fp=fopen("user.txt","r");
+    if(fp==NULL){
+        printf("Error in opening file\n");
+        exit(0);
+    }
+    while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+        if(e.id==id){
+            printf("%d %s %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+            printf("Leaves\n");
+            fp=fopen("leaves.txt","r");
+            if(fp==NULL){
+                printf("Error in opening file\n");
+                exit(0);
+            }
+            while(fscanf(fp,"%d %ld",&l.id,&l.date)!=EOF){
+                if(l.id==id){
+                    //convert epoch to date
+                    char *date=epoch_to_date(l.date);
+                    printf("%d %s\n",l.id,date);
+               
+            }
+            fclose(fp);
+        }
+    }
+    fclose(fp);
 }
