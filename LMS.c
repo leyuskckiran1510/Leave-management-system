@@ -14,12 +14,13 @@ exit ${?}
 //            The program is used to add,delete,modify and display the leaves of the employee
 //            with admin,manager and employee login
 
-
+//take user password and md5 hash it and store it in a file
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include<time.h>
-
+//include for md5 hash
+#include<openssl/md5.h>
 
 
 struct employe{
@@ -73,7 +74,9 @@ void add_employee(struct employe e){
         printf("Error in opening file\n");
         exit(0);
     }
-    fprintf(fp,"%d %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+    //hash the password and store it in the file
+    e.password=md5(e.password);
+    fprintf(fp,"%d %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,*hash,e.type,e.leaves,e.doj);
     fclose(fp);
 }
 
@@ -186,7 +189,7 @@ void display_employee_leaves(int id){
 
 int main(){
     struct employe e={10,"liran","2022/1/1","+977980000","k@gmail.com","134564","admin",10,"2022"};
-    //add_employee(e);
+    add_employee(e);
     //delete_employee(e);
     //modify_employee(e);
     //display_employee(e);    
