@@ -2,6 +2,7 @@
 #if 0
 gcc -o ${0}.out $0 -lm && ${0}.out
 rm -f ${0}.out
+exit ${?}
 #endif
 //can be ingnored if you want to compile and execute separately with gcc
 
@@ -56,7 +57,7 @@ char *login(char *username,char *password){
     while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
         if(strcmp(username,e.email)==0 && strcmp(password,e.password)==0){
             fclose(fp);
-            return e.type;
+            return "Logged";
         }
     }
     fclose(fp);
@@ -89,7 +90,7 @@ void delete_employee(struct employe e){
     }
     while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
         if(e.id!=e.id){
-            fprintf(fp1,"%d %s %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+            fprintf(fp1,"%d %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
     fclose(fp);
@@ -109,7 +110,7 @@ void modify_employee(struct employe e){
     }
     while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
         if(e.id==e.id){
-            fprintf(fp,"%d %s %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+            fprintf(fp,"%d %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
     fclose(fp);
@@ -126,7 +127,7 @@ void display_employee(struct employe e){
     }
     while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
         if(e.id==e.id){
-            printf("%d %s %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+            printf("%d %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
     fclose(fp);
@@ -152,7 +153,7 @@ void display_employee_leaves(int id){
     }
     while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
         if(e.id==id){
-            printf("%d %s %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+            printf("%d %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
             printf("Leaves\n");
             fp=fopen("leaves.txt","r");
             if(fp==NULL){
@@ -164,10 +165,19 @@ void display_employee_leaves(int id){
                     //convert epoch to date
                     char *date=epoch_to_date(l.date);
                     printf("%d %s\n",l.id,date);
-               
             }
             fclose(fp);
         }
     }
     fclose(fp);
+}
+}
+
+int main(){
+    struct employe e={10,"kiran","2022/1/1","+977980000","k@gmail.com","134564","admin",10,"2022"};
+    add_employee(e);
+    printf("addeed employee sucesssfully\n");
+
+
+    return 0;
 }
