@@ -1,9 +1,9 @@
-//for easy compiling and execution 
 #if 0
 gcc -o ${0}.out $0 -lm && ${0}.out
 rm -f ${0}.out
 exit ${?}
 #endif
+//for easy compiling and execution 
 //can be ingnored if you want to compile and execute separately with gcc
 
 
@@ -18,9 +18,14 @@ exit ${?}
 #include<stdlib.h>
 #include<string.h>
 #include<time.h>
+//include string to integer conversion function
+#include<ctype.h>
+//include tolower and toupper function
+#include<math.h>
+
 
 struct employe{
-    int id;
+    char id[20];
     char name[20];
     char dob[20];
     char phone[20];
@@ -34,7 +39,7 @@ struct employe{
 //struct leaves is used to store the leaves of the employee with 
 //the employee id and date is used to store the date of the leaves
 struct leaves{
-    int id;
+    char id[20];
     long int date;
     
 };
@@ -43,7 +48,7 @@ struct leaves{
 //function login() is used to login the user with the given credentials
 //if the user is admin,manager or employee then it will return the user type
 //from user.txt file
-char *login(char *username,char *password){
+int login(char *username,char *password){
     FILE *fp;
     struct employe e;
     fp=fopen("user.txt","r");
@@ -51,27 +56,44 @@ char *login(char *username,char *password){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
         if(strcmp(username,e.email)==0 && strcmp(password,e.password)==0){
             fclose(fp);
-            return "Logged";
+            //return 1 if the user is admin , 2 if the user is manager , 3 if the user is employee
+            if(strcmp(e.type,"admin")==0)
+                return 1;
+            else if(strcmp(e.type,"manager")==0)
+                return 2;
+            else
+                return 3;
         }
     }
     fclose(fp);
-    return "None";
+    return 0;
 }
 
 //function add_employee() is used to add the employee details to the user.txt file
 //with struct employee as parameter
-void add_employee(struct employe e){
+void add_employee(struct employe b){
     FILE *fp;
-    fp=fopen("user.txt","a");
+    struct employe e;
+    fp=fopen("user.txt","r+");
     if(fp==NULL){
         printf("Error in opening file\n");
         exit(0);
     }
+    //check if the employee id is already present in the file
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+        //convert e.id to char and compare with b.id
+
+        if(strcmp(e.id,b.id)==0){
+            printf("Employee id already present\n");
+            fclose(fp);
+            return;
+        }
+    }
     //hash the password in md5 using openssl library and store it in e.password
-    fprintf(fp,"%d %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+    fprintf(fp,"%s %s %s %s %s %s %s %d %s\n",b.id,b.name,b.dob,b.phone,b.email,b.password,b.type,b.leaves,b.doj);
     fclose(fp);
 }
 
@@ -87,9 +109,9 @@ void delete_employee(struct employe b){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
-        if(e.id!=b.id){
-            fprintf(fp1,"%d %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+        if(strcmp(e.id,b.id)!=0){
+            fprintf(fp1,"%s %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
     fclose(fp);
@@ -110,12 +132,12 @@ void modify_employee(struct employe b){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
-        if(e.id==b.id){
-            fprintf(fp1,"%d %s %s %s %s %s %s  %d %s\n",b.id,b.name,b.dob,b.phone,b.email,b.password,b.type,b.leaves,b.doj);
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+        if(strcmp(e.id,b.id)==0){
+            fprintf(fp1,"%s %s %s %s %s %s %s  %d %s\n",b.id,b.name,b.dob,b.phone,b.email,b.password,b.type,b.leaves,b.doj);
         }
-        else if(e.id!=b.id){
-            fprintf(fp1,"%d %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+        else if(strcmp(e.id,b.id)!=0){
+            fprintf(fp1,"%s %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
     fclose(fp);
@@ -134,9 +156,9 @@ void display_employee(struct employe b){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
-        if(e.id==b.id){
-            printf("%d %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+       if(strcmp(e.id,b.id)==0){
+            printf("%s %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
     fclose(fp);
@@ -151,8 +173,9 @@ char *epoch_to_date(int epoch){
 }
 
 //display employee details and leaves of the employee with the employee id
-void display_employee_leaves(int id){
+void display_employee_leaves(char *id){
     FILE *fp;
+    FILE *fp1;
     struct employe e;
     struct leaves l;
     fp=fopen("user.txt","r");
@@ -160,35 +183,52 @@ void display_employee_leaves(int id){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
-        if(e.id==id){
-            printf("%d %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+        if(strcmp(e.id,id)==0){
+            printf("%s %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
             printf("Leaves\n");
-            fp=fopen("leaves.txt","r");
+            fp1=fopen("leaves.txt","r");
             if(fp==NULL){
                 printf("Error in opening file\n");
                 exit(0);
             }
-            while(fscanf(fp,"%d %ld",&l.id,&l.date)!=EOF){
-                if(l.id==id){
+            while(fscanf(fp1,"%s %ld",l.id,&l.date)!=EOF){
+                if(strcmp(e.id,l.id)==0){
                     //convert epoch to date
                     char *date=epoch_to_date(l.date);
-                    printf("%d %s\n",l.id,date);
+                    printf("%s %s\n",l.id,date);
             }
-            fclose(fp);
         }
+        fclose(fp1);
     }
-    fclose(fp);
 }
+fclose(fp);
 }
 
+void gen_id(struct employe *b){
+    //take current time in epoch format and attach employye name to it
+    char str[11];
+    int epoch=time(NULL);
+    sprintf(str, "%d", epoch);
+    str[strlen(str)-1]=b->name[0];
+    printf("%s\n",str);
+    strcpy(b->id,str);
+    }
+
+
 int main(){
-    struct employe e={10,"liran","2022/1/1","+977980000","k@gmail.com","134564","admin",10,"2022"};
-    add_employee(e);
+    //statically declare admin employee details 
+    struct employe admin={"admin!","admin","2022/1/1","+9779800000000","admin@admin.com","696969","admin",10,"2022"};
+    gen_id(&admin);
+    printf("%s\n",admin.id);
+    add_employee(admin);
     //delete_employee(e);
     //modify_employee(e);
-    //display_employee(e);    
-    printf("addeed employee sucesssfully\n");
+    //display_employee(e); 
+    //id is generated from the name of the employee
+    
+
+    //printf("addeed employee sucesssfully\n");
 
 
     return 0;
