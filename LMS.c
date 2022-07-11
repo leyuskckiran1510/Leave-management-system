@@ -18,10 +18,6 @@ exit ${?}
 #include<stdlib.h>
 #include<string.h>
 #include<time.h>
-//include string to integer conversion function
-#include<ctype.h>
-//include tolower and toupper function
-#include<math.h>
 
 
 struct employe{
@@ -219,17 +215,11 @@ void gen_id(struct employe *b){
 int main(){
     //statically declare admin employee details 
     struct employe admin={"admin!","admin","2022/1/1","+9779800000000","admin@admin.com","696969","admin",10,"2022"};
-    gen_id(&admin);
-    printf("%s\n",admin.id);
+    //gen_id(&admin);
+    //printf("%s\n",admin.id);
     add_employee(admin);
     //delete_employee(e);
     //modify_employee(e);
     //display_employee(e); 
-    //id is generated from the name of the employee
-    
-
-    //printf("addeed employee sucesssfully\n");
-
-
     return 0;
 }
