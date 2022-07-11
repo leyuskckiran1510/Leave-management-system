@@ -53,8 +53,11 @@ int login(char *username,char *password){
         exit(0);
     }
     while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
-        if(strcmp(username,e.email)==0 && strcmp(password,e.password)==0){
+        printf("%s %s %s %s\n",e.name,e.password,username,password);
+        printf("%d\n",strcmp(e.name,username));
+        if(strcmp(e.name,username)==0 && strcmp(e.password,password)==0){
             fclose(fp);
+            printf("Login Successful\n");
             //return 1 if the user is admin , 2 if the user is manager , 3 if the user is employee
             if(strcmp(e.type,"admin")==0)
                 return 1;
@@ -214,12 +217,12 @@ void gen_id(struct employe *b){
 
 int main(){
     //statically declare admin employee details 
-    struct employe admin={"admin!","admin","2022/1/1","+9779800000000","admin@admin.com","696969","admin",10,"2022"};
+    //struct employe admin={"admin!","admin","2022/1/1","+9779800000000","admin@admin.com","696969","admin",10,"2022"};
     //gen_id(&admin);
     //printf("%s\n",admin.id);
-    add_employee(admin);
+    //add_employee(admin);
     //delete_employee(e);
     //modify_employee(e);
-    //display_employee(e); 
+    //display_employee(e);
     return 0;
 }
