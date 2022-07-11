@@ -79,9 +79,10 @@ void add_employee(struct employe e){
 
 //function delete_employee() is used to delete the employee details from the user.txt file
 //with struct employee as parameter
-void delete_employee(struct employe e){
+void delete_employee(struct employe b){
     FILE *fp;
     FILE *fp1;
+    struct employe e;
     fp=fopen("user.txt","r");
     fp1=fopen("temp.txt","w");
     if(fp==NULL || fp1==NULL){
@@ -89,7 +90,7 @@ void delete_employee(struct employe e){
         exit(0);
     }
     while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
-        if(e.id!=e.id){
+        if(e.id!=b.id){
             fprintf(fp1,"%d %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
@@ -101,32 +102,42 @@ void delete_employee(struct employe e){
 
 //function modify_employee() is used to modify the employee details from the user.txt file
 //with struct employee as parameter
-void modify_employee(struct employe e){
+void modify_employee(struct employe b){
     FILE *fp;
+    FILE *fp1;
+    struct employe e;
     fp=fopen("user.txt","r");
-    if(fp==NULL){
+    fp1=fopen("temp.txt","w");
+    if(fp==NULL || fp1==NULL){
         printf("Error in opening file\n");
         exit(0);
     }
     while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
-        if(e.id==e.id){
-            fprintf(fp,"%d %s %s %s %s %s %s %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+        if(e.id==b.id){
+            fprintf(fp1,"%d %s %s %s %s %s %s  %d %s\n",b.id,b.name,b.dob,b.phone,b.email,b.password,b.type,b.leaves,b.doj);
+        }
+        else if(e.id!=b.id){
+            fprintf(fp1,"%d %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
     fclose(fp);
+    fclose(fp1);
+    remove("user.txt");
+    rename("temp.txt","user.txt");
 }
 
 //function display_employee() is used to display the employee details from the user.txt file
 //with struct employee as parameter
-void display_employee(struct employe e){
+void display_employee(struct employe b){
     FILE *fp;
+    struct employe e;
     fp=fopen("user.txt","r");
     if(fp==NULL){
         printf("Error in opening file\n");
         exit(0);
     }
     while(fscanf(fp,"%d %s %s %s %s %s %s %d %s",&e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
-        if(e.id==e.id){
+        if(e.id==b.id){
             printf("%d %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
@@ -174,8 +185,10 @@ void display_employee_leaves(int id){
 }
 
 int main(){
-    struct employe e={10,"kiran","2022/1/1","+977980000","k@gmail.com","134564","admin",10,"2022"};
-    add_employee(e);
+    struct employe e={10,"liran","2022/1/1","+977980000","k@gmail.com","134564","admin",10,"2022"};
+    //add_employee(e);
+    //delete_employee(e);
+    modify_employee(e);
     printf("addeed employee sucesssfully\n");
 
 
