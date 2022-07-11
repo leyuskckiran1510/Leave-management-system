@@ -188,7 +188,8 @@ int main(){
     struct employe e={10,"liran","2022/1/1","+977980000","k@gmail.com","134564","admin",10,"2022"};
     //add_employee(e);
     //delete_employee(e);
-    modify_employee(e);
+    //modify_employee(e);
+    //display_employee(e);    
     printf("addeed employee sucesssfully\n");
 
 
