@@ -35,6 +35,9 @@ exit ${?}
 #include<stdlib.h>
 #include<string.h>
 #include<time.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <termios.h>
 
 
 //ansice code for screen clearing and moving cursor to the top left corner
@@ -234,6 +237,23 @@ void gen_id(struct employe *b){
     strcpy(b->id,str);
     }
 
+
+void alert(char *text){
+    char key;
+    printf("%s\n",text);
+    printf("Press any key to continue\n");
+    //key press to contin
+    key=getchar_unlocked();
+    if(key=='\n'){
+        return;
+    }
+    else{
+        alert(text);
+    }
+    
+}
+
+
 void login_screen(char *n,char *p){
     //deginse of a login in screen with the name and password as parameters
     //using ansi escape sequence
@@ -282,16 +302,28 @@ void employee_add_Screen(){
     gen_id(&e);
     printf("%s",e.id);
     cls;
-
-    
-   
-
-
+    add_employee(e);
 }
 
 
 int main(){
     int status;
+    //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+    /* referenced from https://stackoverflow.com/questions/8101079/making-stdin-non-blocking*/
+    //to handel single key stroke at a time as linux/unix terminal won't allow by default due to canonical mode
+    //code between '//||' is from stackoverflow
+    struct timeval tv;
+    struct termios ttystate, ttysave;
+    tcgetattr(STDIN_FILENO, &ttystate);
+    ttysave = ttystate;
+    //turn off canonical mode and echo
+    ttystate.c_lflag &= ~(ICANON | ECHO);
+    //minimum of number input read.
+    ttystate.c_cc[VMIN] = 1;
+
+    //set the terminal attributes.
+    tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
+    //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     //char name[50];
     //char password[50];
     //statically declare admin employee details 
@@ -305,6 +337,15 @@ int main(){
     //login_screen(name,password);
     //status=login(name,password);
     //printf("%d\n",status);
-    employee_add_Screen();
+    //employee_add_Screen();
+    alert("Hello");
+    //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+    //stackoverflow code 
+    //reverting back to canonical mode and echo to avoid terminal crashes after the program is complete
+    //please don't press CTRL+C to exit the program as it will cause the terminal to crash
+    ttystate.c_lflag |= ICANON | ECHO;
+    //set the terminal attributes.
+    tcsetattr(STDIN_FILENO, TCSANOW, &ttysave);
+    //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     return 0;
 }
