@@ -84,7 +84,7 @@ int login(char *username,char *password){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %ld",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
         if(strcmp(e.name,username)==0 && strcmp(e.password,password)==0){
             fclose(fp);
             printf("Login Successful\n");
@@ -101,6 +101,56 @@ int login(char *username,char *password){
     return 0;
 }
 
+
+void calander(){
+    //make a calander with the dates of the month
+    //the calander is made with the help of the ansice code
+    //referenced from  https://en.wikipedia.org/wiki/ANSI_escape_code
+    printf("\033[2J");
+    int count=32;
+    int placex=10;
+    int placey=30;
+    char *week[7]={"SUN","MON","TUE","WED","THU","FRI","SAT"};
+    int i,j;
+    for(i=0;i<7;i++){
+        printf("\033[1;32m\033[%d;%dH%s",placex-2,placey+i*5,week[i]);
+        if(i==6){
+            printf("\033[38;2;220;255;20m\033[48;2;255;30;30m\033[%d;%dH%s  \x1b[0m",placex-2,placey+i*5,week[i]);
+        }
+        //placey+=10;
+    }
+
+    printf("\033[%d;%dH",placex,placey);
+    for (int i = 1; i < count; i++)
+    {
+        if (i%7==0)
+        {   placex++;
+            printf("\033[38;2;220;255;20m\033[48;2;255;30;30m%2d   \033[0m",i);
+            printf("\033[%d;%dH",placex,placey);
+        }
+        else
+        {
+           printf("\033[1;32m%2d   \033[0m",i);
+        }
+
+
+    }
+
+
+
+
+    //move the cursor to the bottom left corner
+    printf("\033[%d;%dH",placex+10,placey+5);
+    
+
+
+
+
+
+
+
+}
+
 //function add_employee() is used to add the employee details to the user.txt file
 //with struct employee as parameter
 void add_employee(struct employe b){
@@ -112,7 +162,7 @@ void add_employee(struct employe b){
         exit(0);
     }
     //check if the employee id is already present in the file
-    while(fscanf(fp,"%s %s %s %s %s %s %s %d %d",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %ld",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
         //convert e.id to char and compare with b.id
         if(strcmp(e.id,b.id)==0){
             printf("Employee id already present\n");
@@ -121,7 +171,7 @@ void add_employee(struct employe b){
         }
     }
     //hash the password in md5 using openssl library and store it in e.password
-    fprintf(fp,"%s %s %s %s %s %s %s %d %d\n",b.id,b.name,b.dob,b.phone,b.email,b.password,b.type,b.leaves,b.doj);
+    fprintf(fp,"%s %s %s %s %s %s %s %d %ld\n",b.id,b.name,b.dob,b.phone,b.email,b.password,b.type,b.leaves,b.doj);
     fclose(fp);
 }
 
@@ -137,9 +187,9 @@ void delete_employee(struct employe b){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %ld",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
         if(strcmp(e.id,b.id)!=0){
-            fprintf(fp1,"%s %s %s %s %s %s %s  %d %d\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+            fprintf(fp1,"%s %s %s %s %s %s %s  %d %ld\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
     fclose(fp);
@@ -160,12 +210,12 @@ void modify_employee(struct employe b){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%s %s %s %s %s %s %s %d %d",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %ld",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
         if(strcmp(e.id,b.id)==0){
-            fprintf(fp1,"%s %s %s %s %s %s %s  %d %d\n",b.id,b.name,b.dob,b.phone,b.email,b.password,b.type,b.leaves,e.doj);
+            fprintf(fp1,"%s %s %s %s %s %s %s  %d %ld\n",b.id,b.name,b.dob,b.phone,b.email,b.password,b.type,b.leaves,e.doj);
         }
         else if(strcmp(e.id,b.id)!=0){
-            fprintf(fp1,"%s %s %s %s %s %s %s  %d %d\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+            fprintf(fp1,"%s %s %s %s %s %s %s  %d %ld\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
     fclose(fp);
@@ -185,9 +235,10 @@ void display_employee(struct employe b){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%s %s %s %s %s %s %s %d %d",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %ld",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
        if(strcmp(e.id,b.id)==0){
-        strcpy(doj,ctime(e.doj));
+        time_t t = e.doj;
+        strcpy(doj,ctime(&t));
         printf("%s %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,doj);
         }
     }
@@ -214,9 +265,10 @@ void display_employee_leaves(char *id){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%s %s %s %s %s %s %s %d %d",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %ld",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
         if(strcmp(e.id,id)==0){
-            strcpy(doj,ctime(e.doj));
+            time_t t = e.doj;
+            strcpy(doj,ctime(&t));
             printf("%s %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,doj);
             printf("Leaves\n");
             fp1=fopen("leaves.txt","r");
@@ -360,8 +412,9 @@ int main(){
     //login_screen(name,password);
     //status=login(name,password);
     //printf("%d\n",status);
-    employee_add_Screen();
+    //employee_add_Screen();
     
     //alert("Hello");
+    calander();
     return 0;
 }
