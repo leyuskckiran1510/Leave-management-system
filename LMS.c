@@ -39,10 +39,13 @@ exit ${?}
 #include <fcntl.h>
 #include <termios.h>
 
-
 //ansice code for screen clearing and moving cursor to the top left corner
 //referenced from  https://en.wikipedia.org/wiki/ANSI_escape_code
-#define cls printf("\033[2J\033[1;1H");
+
+
+
+
+
 
 
 struct employe{
@@ -54,7 +57,7 @@ struct employe{
     char password[50];
     char type[50];
     int leaves;
-    char doj[50];
+    long int doj;
 };
 
 //struct leaves is used to store the leaves of the employee with 
@@ -69,6 +72,10 @@ struct leaves{
 //function login() is used to login the user with the given credentials
 //if the user is admin,manager or employee then it will return the user type
 //from user.txt file
+
+
+
+
 int login(char *username,char *password){
     FILE *fp;
     struct employe e;
@@ -105,9 +112,8 @@ void add_employee(struct employe b){
         exit(0);
     }
     //check if the employee id is already present in the file
-    while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %d",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
         //convert e.id to char and compare with b.id
-
         if(strcmp(e.id,b.id)==0){
             printf("Employee id already present\n");
             fclose(fp);
@@ -115,7 +121,7 @@ void add_employee(struct employe b){
         }
     }
     //hash the password in md5 using openssl library and store it in e.password
-    fprintf(fp,"%s %s %s %s %s %s %s %d %s\n",b.id,b.name,b.dob,b.phone,b.email,b.password,b.type,b.leaves,b.doj);
+    fprintf(fp,"%s %s %s %s %s %s %s %d %d\n",b.id,b.name,b.dob,b.phone,b.email,b.password,b.type,b.leaves,b.doj);
     fclose(fp);
 }
 
@@ -133,7 +139,7 @@ void delete_employee(struct employe b){
     }
     while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
         if(strcmp(e.id,b.id)!=0){
-            fprintf(fp1,"%s %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+            fprintf(fp1,"%s %s %s %s %s %s %s  %d %d\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
     fclose(fp);
@@ -154,12 +160,12 @@ void modify_employee(struct employe b){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %d",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
         if(strcmp(e.id,b.id)==0){
-            fprintf(fp1,"%s %s %s %s %s %s %s  %d %s\n",b.id,b.name,b.dob,b.phone,b.email,b.password,b.type,b.leaves,b.doj);
+            fprintf(fp1,"%s %s %s %s %s %s %s  %d %d\n",b.id,b.name,b.dob,b.phone,b.email,b.password,b.type,b.leaves,e.doj);
         }
         else if(strcmp(e.id,b.id)!=0){
-            fprintf(fp1,"%s %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+            fprintf(fp1,"%s %s %s %s %s %s %s  %d %d\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
         }
     }
     fclose(fp);
@@ -173,14 +179,16 @@ void modify_employee(struct employe b){
 void display_employee(struct employe b){
     FILE *fp;
     struct employe e;
+    char doj[50];
     fp=fopen("user.txt","r");
     if(fp==NULL){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %d",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
        if(strcmp(e.id,b.id)==0){
-            printf("%s %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+        strcpy(doj,ctime(e.doj));
+        printf("%s %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,doj);
         }
     }
     fclose(fp);
@@ -200,14 +208,16 @@ void display_employee_leaves(char *id){
     FILE *fp1;
     struct employe e;
     struct leaves l;
+    char doj[50];
     fp=fopen("user.txt","r");
     if(fp==NULL){
         printf("Error in opening file\n");
         exit(0);
     }
-    while(fscanf(fp,"%s %s %s %s %s %s %s %d %s",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,e.doj)!=EOF){
+    while(fscanf(fp,"%s %s %s %s %s %s %s %d %d",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,&e.leaves,&e.doj)!=EOF){
         if(strcmp(e.id,id)==0){
-            printf("%s %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,e.doj);
+            strcpy(doj,ctime(e.doj));
+            printf("%s %s %s %s %s %s %s  %d %s\n",e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,doj);
             printf("Leaves\n");
             fp1=fopen("leaves.txt","r");
             if(fp==NULL){
@@ -227,6 +237,9 @@ void display_employee_leaves(char *id){
 fclose(fp);
 }
 
+
+
+
 void gen_id(struct employe *b){
     //take current time in epoch format and attach employye name to it
     char str[11];
@@ -240,16 +253,41 @@ void gen_id(struct employe *b){
 
 void alert(char *text){
     char key;
-    printf("%s\n",text);
+    //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+    /* referenced from https://stackoverflow.com/questions/8101079/making-stdin-non-blocking*/
+    //to handel single key stroke at a time as linux/unix terminal won't allow by default due to canonical mode
+    //code between '//||' is from stackoverflow
+    struct timeval tv;
+    struct termios ttystate, ttysave;
+    tcgetattr(STDIN_FILENO, &ttystate);
+    ttysave = ttystate;
+    //turn off canonical mode and echo
+    ttystate.c_lflag &= ~(ICANON | ECHO);
+    //minimum of number input read.
+    ttystate.c_cc[VMIN] = 1;
+    //set the terminal attributes.
+    tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
+    //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+    
     printf("Press any key to continue\n");
     //key press to contin
-    key=getchar_unlocked();
+    key=getchar();
     if(key=='\n'){
+            
+    //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+    //stackoverflow code 
+    //reverting back to canonical mode and echo to avoid terminal crashes after the program is complete
+    //please don't press CTRL+C to exit the program as it will cause the terminal to crash
+    ttystate.c_lflag |= ICANON | ECHO;
+    //set the terminal attributes.
+    tcsetattr(STDIN_FILENO, TCSANOW, &ttysave);
+    //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         return;
     }
     else{
         alert(text);
     }
+    
     
 }
 
@@ -257,7 +295,7 @@ void alert(char *text){
 void login_screen(char *n,char *p){
     //deginse of a login in screen with the name and password as parameters
     //using ansi escape sequence
-    cls;
+    printf("\033[2J\033[1;1H\033[?25h\033[0m");
     printf("\033[10;50H\033[38;2;150;15;245mLogin Screen\033[0m\n");
     printf("\033[13;40H\033[38;2;40;205;205mEnter name:\033[0m\n");
     printf("\033[15;40H\033[38;2;205;40;205mEnter password:\033[0m\n");
@@ -267,18 +305,19 @@ void login_screen(char *n,char *p){
     printf("\033[15;56H\033[38;2;255;50;255m");
     scanf("%s",p);
     printf("\033[0m\n");
-    cls;
+    printf("\033[2J\033[1;1H\033[?25h\033[0m");
 
 }
 //employee adding Screen
 void employee_add_Screen(){
     struct employe e;
-    char *date;
+    /*char *date;
     time_t t = time(NULL);
     date = ctime(&t);
-    strcpy(e.doj,date);
+    strcpy(e.doj,date);*/
+    e.doj=time(NULL);
     e.leaves=5;
-    cls;
+    printf("\033[2J\033[1;1H\033[?25h\033[0m");
     printf("\033[9;50H\033[38;2;150;15;245mEmployee Add Screen\033[0m\n");
     printf("\033[12;40H\033[38;2;40;205;205mEnter NAME:\033[0m\n");
     printf("\033[13;40H\033[38;2;205;40;205mEnter DOB:\033[0m\n");
@@ -301,29 +340,13 @@ void employee_add_Screen(){
     strcpy(e.id,"Blank");
     gen_id(&e);
     printf("%s",e.id);
-    cls;
+    printf("\033[2J\033[1;1H\033[?25h\033[0m");
     add_employee(e);
 }
 
 
 int main(){
     int status;
-    //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    /* referenced from https://stackoverflow.com/questions/8101079/making-stdin-non-blocking*/
-    //to handel single key stroke at a time as linux/unix terminal won't allow by default due to canonical mode
-    //code between '//||' is from stackoverflow
-    struct timeval tv;
-    struct termios ttystate, ttysave;
-    tcgetattr(STDIN_FILENO, &ttystate);
-    ttysave = ttystate;
-    //turn off canonical mode and echo
-    ttystate.c_lflag &= ~(ICANON | ECHO);
-    //minimum of number input read.
-    ttystate.c_cc[VMIN] = 1;
-
-    //set the terminal attributes.
-    tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
-    //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     //char name[50];
     //char password[50];
     //statically declare admin employee details 
@@ -337,15 +360,8 @@ int main(){
     //login_screen(name,password);
     //status=login(name,password);
     //printf("%d\n",status);
-    //employee_add_Screen();
-    alert("Hello");
-    //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    //stackoverflow code 
-    //reverting back to canonical mode and echo to avoid terminal crashes after the program is complete
-    //please don't press CTRL+C to exit the program as it will cause the terminal to crash
-    ttystate.c_lflag |= ICANON | ECHO;
-    //set the terminal attributes.
-    tcsetattr(STDIN_FILENO, TCSANOW, &ttysave);
-    //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+    employee_add_Screen();
+    
+    //alert("Hello");
     return 0;
 }
