@@ -35,6 +35,8 @@ exit ${?}
 #include<stdlib.h>
 #include<string.h>
 #include<time.h>
+
+//DevC++ user remove this below three lines of include if you are using any other compiler
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
@@ -68,10 +70,17 @@ struct leaves{
     
 };
 
+/*
 
-//function login() is used to login the user with the given credentials
-//if the user is admin,manager or employee then it will return the user type
-//from user.txt file
+REMOVE THIS PRESS FUNCTION AND REPLACE press(&key) with
+_____________                ___________________
+|press(&key);| ======>       |char key;        |    IF YOU ARE USING DEVC++
+--------------               |key=getchar();   |
+                             -------------------
+If you are DevC++ user 
+*/
+
+
 void press(int *key){
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     /* referenced from https://stackoverflow.com/questions/8101079/making-stdin-non-blocking*/
@@ -102,6 +111,9 @@ void press(int *key){
 
 
 
+//function login() is used to login the user with the given credentials
+//if the user is admin,manager or employee then it will return the user type
+//from user.txt file
 int login(char *username,char *password){
     FILE *fp;
     struct employe e;
