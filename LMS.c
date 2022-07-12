@@ -310,20 +310,21 @@ void display_employees(){
         i++;
         count++;
         if(count>=10){
-            printf("\033[%d;%dH%s",24,5,"Press S to continue or any other key to exit");
+            printf("\033[%d;%dH%s",26,5,"Press S to continue or any other key to exit");
             press(&key);
             if(key=='s'||key=='S'){
                 count=0;                                                                 //
-                printf("\033[%d;%dH%s",24,5,"                                            ");
+                printf("\033[%d;%dH%s",26,5,"                                            ");
                 continue;
             }
             else{
+                printf("\033[%d;%dH%s",26,5,"                                            ");
                 break;
             }
         }
     }
     fclose(fp);
-    printf("\033[%d;%dH%s\033[24,32H",24,5,"Press any key to continue");
+    printf("\033[%d;%dH%s\033[26,32H",26,5,"Press any key to continue");
     press(&key);
     printf("\033[2J\033[1;1H");
 }
@@ -460,11 +461,11 @@ int main(){
     //login_screen(name,password);
     //status=login(name,password);
     //printf("%d\n",status);
-    employee_add_Screen();
+    //employee_add_Screen();
     
     //alert("Hello");
     //calander();
-    //display_employees();
+    display_employees();
     /*int p;
     press(&p);
     printf("%d\n",p);*/
