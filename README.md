@@ -28,9 +28,6 @@ in your code editor it is like a checkpoint so you dont's have to go through eve
       ### remeber to read the comments and add or remove some lines to adjust with your Platform.
 1.      git clone https://github.com/leyuskckiran1510/C.git
 2.       cd ./C
-3.      icacls ./LMS.c /grant Everyone:F
-4.      ./LMS.c
-
-## if this won't work try compiling mannually (Windows/Any other Platform)
-3.      gcc -o LMS.c ./LMS.c && ./LMS.c
+3.       gcc -o LMS.exe ./LMS.c ./anisc.c
+4.      ./LMS.exe
 
