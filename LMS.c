@@ -1,5 +1,5 @@
 #if 0
-gcc -o ${0}.out $0 -lm && ${0}.out
+gcc -o ${0}.out $0 ./anisc.c -lm && ${0}.out
 rm -f ${0}.out
 exit ${?}
 #endif
@@ -45,7 +45,6 @@ exit ${?}
 #include<fcntl.h>
 
 #elif defined _WIN32 || defined _WIN64
-#define printf(...) wprintf(__VA_ARGS__)
 void press(int *key){
         * key = getchar();
     }
@@ -456,6 +455,7 @@ void employee_add_Screen() {
 }
 
 int main() {
+    setupConsole();
     int status;
     //hide cursor
     printf("x1b[?25l");
@@ -499,5 +499,6 @@ int main() {
 
     //show cursor again
     printf("\x1b[?25h");
+    restoreConsole();
     return 0;
 }
