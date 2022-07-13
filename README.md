@@ -27,4 +27,3 @@ ANSI escape code sequences then everything will look  gibrish.
 2.       cd ./C
 3.       gcc -o LMS.exe ./LMS.c ./anisc.c
 4.      ./LMS.exe
-
