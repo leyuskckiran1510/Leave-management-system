@@ -115,11 +115,10 @@ int login(char * username, char * password) {
     }
     while (fscanf(fp, "%s %s %s %s %s %s %s %d %ld", e.id, e.name, e.dob, e.phone, e.email, e.password, e.type, & e.leaves, & e.doj) != EOF) {
         //print username and password from the file and given password and username are compared
-        printf("%s %s %s %s\n",e.name,username, e.password,password);
-        getchar();
         if (strcmp(username, e.name) == 0 && strcmp(password, e.password) == 0) {
             fclose(fp);
             printf("Login Successful\n");
+            
             //return 1 if the user is admin , 2 if the user is manager , 3 if the user is employee
             if (strcmp(e.type, "admin") == 0)
                 return 49;
@@ -129,6 +128,7 @@ int login(char * username, char * password) {
                 return 51;
         }
     }
+    getchar();
     fclose(fp);
     return 48;
 }
@@ -137,7 +137,7 @@ void calander() {
     //make a calander with the dates of the month
     //the calander is made with the help of the ansice code
     //referenced from  https://en.wikipedia.org/wiki/ANSI_escape_code
-    printf("\033[2J");
+    printf("\033[0J");
     int count = 32;
     int placex = 10;
     int placey = 30;
@@ -171,6 +171,8 @@ void calander() {
     }
     //move the cursor to the bottom left corner
     printf("\033[%d;%dH", placex + 10, placey + 5);
+    printf("Press Any Key To Continue");
+    press(&count);
 
 }
 
@@ -303,6 +305,7 @@ void display_employees() {
         printf("Error in opening file\n");
         exit(0);
     }
+    printf("\033[0J\033[1;1H\033[?25l\033[0m");
     printf("\033[%d;%dH", 3, 5);
     for (int j = 0; j < 8; j++) {
         printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s\t", 3, 16 * j, 150, 255, j * 31, title[j]);
@@ -338,8 +341,8 @@ void display_employees() {
     }
     fclose(fp);
     printf("\033[%d;%dH%s\033[26,32H", 26, 5, "Press any key to continue");
-    press( & key);
-    printf("\033[2J\033[1;1H");
+    press(&key);
+    printf("\033[0J\033[1;1H");
 }
 
 //function to convert time epoch to date
@@ -406,7 +409,7 @@ void login_screen(char * n, char * p){
     //deginse of a login in screen with the name and password as parameters
     //using ansi escape sequence
     title("LOGIN SCREEN");
-    printf("\033[2J\033[1;1H\033[?25h\033[0m");
+    printf("\033[0J\033[1;1H\033[?25h\033[0m");
     printf("\033[10;50H\033[38;2;150;255;0mLogin Screen\033[0m\n");
     printf("\033[13;40H\033[38;2;150;255;31mEnter name:\033[0m\n");
     printf("\033[15;40H\033[38;2;150;255;62mEnter password:\033[0m\n");
@@ -415,8 +418,9 @@ void login_screen(char * n, char * p){
     fflush(stdin);
     printf("\033[15;56H\033[38;2;255;50;255m");
     scanf("%s", p);
+    fflush(stdin);
     printf("\033[0m\n");
-    printf("\033[2J\033[1;1H\033[?25h\033[0m");
+    //printf("\033[0J\033[1;1H\033[?25h\033[0m");
 
 }
 //employee adding Screen
@@ -430,7 +434,7 @@ void employee_add_Screen() {
     long int time_epoch = time(NULL);
     e.doj = time_epoch;
     e.leaves = 5;
-    printf("\033[2J\033[1;1H\033[?25h\033[0m");
+    printf("\033[0J\033[1;1H\033[?25h\033[0m");
     printf("\033[9;50H\033[38;2;150;255;0mEmployee Add Screen\033[0m\n");
     printf("\033[12;40H\033[38;2;150;255;31mEnter NAME:\033[0m\n");
     printf("\033[13;40H\033[38;2;150;255;62mEnter DOB:\033[0m\n");
@@ -453,14 +457,14 @@ void employee_add_Screen() {
     strcpy(e.id, "Blank");
     gen_id( & e);
     printf("%s", e.id);
-    printf("\033[2J\033[1;1H\033[?25h\033[0m");
+    printf("\033[0J\033[1;1H\033[?25h\033[0m");
     add_employee(e);
 }
 
 
 void admin_screen( char * n, char * p) {
     title("ADMIN SCREEN");
-    printf("\033[2J\033[1;1H\033[?25h\033[0m");
+    printf("\033[0J\033[1;1H\033[?25h\033[0m");
     printf("\033[10;50H\033[38;2;150;255;0mAdmin Screen\033[0m\n");
     printf("\033[12;40H\033[38;2;150;255;31mAdd Employee\033[0m\n");
     printf("\033[13;40H\033[38;2;150;255;62mView Employee\033[0m\n");
@@ -472,42 +476,24 @@ void admin_screen( char * n, char * p) {
 
 void menu1(){
     title("Welcome To LMS by Kiran");
-    printf("\033[2J\033[1;1H\033[?25l\033[0m");
+    printf("\033[0J\033[1;1H\033[?25l\033[0m");
     printf("\033[10;50H\033[38;2;150;255;0mWelcome to Employee Management System\033[0m\n");
-    printf("\033[12;40H\033[38;2;150;255;31mPress 1 to login\033[0m\n");
-    printf("\033[13;40H\033[38;2;150;255;62mPress 2 to add employee\033[0m\n");
-    printf("\033[16;40H\033[38;2;150;255;155mPress 3 to display calander\033[0m\n");
-    printf("\033[17;40H\033[38;2;150;255;181mPress 4 to exit\033[0m\n");
+    printf("\033[11;40H\033[38;2;150;255;31mPress 1 to LOGIN\033[0m\n");
+    printf("\033[12;40H\033[38;2;150;255;155mPress 2 to DISPLAY CALANDER\033[0m\n");
+    printf("\033[13;40H\033[38;2;150;255;181mPress 3 to EXIT\033[0m\n");
     printf("\033[12;56H\033[38;2;50;255;255m");
 }
 
 
-//user user arguments from the command line
-void user_arguments(int argc, char * argv[], char * n, char * p){
-    if(argc == 3){
-        strcpy(n, argv[1]);
-        strcpy(p, argv[2]);
-    }
-    else{
-        printf("\033[2J\033[1;1H\033[?25l\033[0m");
-        printf("\033[10;50H\033[38;2;150;255;0mWelcome to Employee Management System\033[0m\n");
-        printf("\033[12;40H\033[38;2;150;255;31mPress 1 to login\033[0m\n");
-        printf("\033[13;40H\033[38;2;150;255;62mPress 2 to add employee\033[0m\n");
-        printf("\033[16;40H\033[38;2;150;255;155mPress 3 to display calander\033[0m\n");
-        printf("\033[17;40H\033[38;2;150;255;181mPress 4 to exit\033[0m\n");
-        printf("\033[12;56H\033[38;2;50;255;255m");
-        scanf("%s", n);
-        scanf("%s", p);
-    }
-}
 int main() {
     setupConsole();
     int status;
     //hide cursor
-    printf("x1b[?25l");
+    printf("\x1b[?25l");
     char name[50];
     char password[50];
     char a;
+    int fake_key;
     //statically declare admin employee details 
     //struct employe admin={"admin!","admin","2022/1/1","+9779800000000","admin@admin.com","696969","admin",10,10};
     //gen_id(&admin);
@@ -534,85 +520,74 @@ int main() {
     press(&status);
     //ascii values of 1,2,3,4 are 49,50,51,52
     if(status==49) {
-        printf("\033[2J\033[1;1H\033[?25l\033[0m");
+        printf("\033[0J\033[1;1H\033[?25l\033[0m");
         login_screen(name,password);
+        getchar();
         status=login(name,password);
+        //if admin
         if(status==49) {
-            printf("\033[2J\033[1;1H\033[?25l\033[0m");
-            admin_screen(name,password);
-            press(&status);
-            if(status==49) {
-                //clear screen
-                printf("\033[2J\033[1;1H\033[?25l\033[0m");
-                employee_add_Screen();
-            }
-            else if(status==50) {
-                printf("\033[2J\033[1;1H\033[?25l\033[0m");
-                display_employees();
-            }
-            else if(status==51) {
-                printf("\033[2J\033[1;1H\033[?25l\033[0m");
-                display_leaves();
-            }
-            else if(status==52) {
-                printf("\033[2J\033[1;1H\033[?25l\033[0m");
-                display_leaves();
-            }
-            else if(status==53) {
-                printf("\033[2J\033[1;1H\033[?25l\033[0m");
-                calander();
-            }
-            else if(status==54) {
-                printf("\033[2J\033[1;1H\033[?25l\033[0m");
-                exit(0);
-            }
+                                printf("\033[0J\033[1;1H\033[?25l\033[0m");
+                                admin_screen(name,password);
+                                press(&status);
+                                if(status==49) {
+                                    //clear screen
+                                    printf("\033[0J\033[1;1H\033[?25l\033[0m");
+                                    employee_add_Screen();
+                                }
+                                else if(status==50) {
+                                    printf("\033[0J\033[1;1H\033[?25l\033[0m");
+                                    display_employees();
+                                }
+                                else if(status==51) {
+                                    printf("\033[0J\033[1;1H\033[?25l\033[0m");
+                                    display_leaves();
+                                }
+                                else if(status==52) {
+                                    printf("\033[0J\033[1;1H\033[?25l\033[0m");
+                                    display_leaves();
+                                }
+                                else if(status==53) {
+                                    printf("\033[0J\033[1;1H\033[?25l\033[0m");
+                                    calander();
+                                }
+                                else if(status==54) {
+                                    printf("\033[0J\033[1;1H\033[?25l\033[0m");
+                                    break;
+                                }
         }
+        //if manager
         else if(status==50) {
-            printf("\033[2J\033[1;1H\033[?25l\033[0m");
-            employee_add_Screen();
+                                printf("\033[0J\033[1;1H\033[?25l\033[0m");
+                                employee_add_Screen();
         }
+        //if employee
         else if(status==51) {
-            printf("\033[2J\033[1;1H\033[?25l\033[0m");
+            printf("\033[0J\033[1;1H\033[?25l\033[0m");
             display_employees();
         }
-        else if(status==52) {
-            printf("\033[2J\033[1;1H\033[?25l\033[0m");
-            display_leaves();
+        else if(status==48) {
+            printf("\033[11;45H\033[?25l\033[6mWRONG CREDENTIALS TRY AGAIN\033[0m");
+            press(&fake_key);
         }
-        else if(status==53) {
-            printf("\033[2J\033[1;1H\033[?25l\033[0m");
-            calander();
-        }
-        else if(status==54) {
-            printf("\033[2J\033[1;1H\033[?25l\033[0m");
-            exit(0);
+        else{
+            printf("\033[11;45H\033[?25l\033[6mWRONG CREDENTIALS TRY AGAIN %d\033[0m",status);
+            press(&fake_key);
         }
     }
     else if(status==50) {
-        printf("\033[2J\033[1;1H\033[?25l\033[0m");
-        employee_add_Screen();
-    }
-    else if(status==51) {
-        printf("\033[2J\033[1;1H\033[?25l\033[0m");
-        display_employees();
-    }
-    else if(status==52) {
-        printf("\033[2J\033[1;1H\033[?25l\033[0m");
-        display_leaves();
-    }
-    else if(status==53) {
-        printf("\033[2J\033[1;1H\033[?25l\033[0m");
+        printf("\033[0J\033[1;1H\033[?25l\033[0m");
         calander();
     }
-    else if(status==54) {
-        printf("\033[2J\033[1;1H\033[?25l\033[0m");
-        exit(0);
+    else if(status==51) {
+        printf("\033[0J\033[1;1H\033[?25l\033[0m");
+        break;
     }
-    printf("\033[2J\033[1;1H\033[?25l\033[0m");
+    printf("\033[0J\033[1;1H\033[?25l\033[0m");
 
     //show cursor again
     }
     printf("\x1b[?25h");
+    printf("\033[0J\033[1;1H\033[?25l\033[0m");
     restoreConsole();
     return 0;
 }
