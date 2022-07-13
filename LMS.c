@@ -473,11 +473,11 @@ int main(){
     //login_screen(name,password);
     //status=login(name,password);
     //printf("%d\n",status);
-    //employee_add_Screen();
+    employee_add_Screen();
     
     //alert("Hello");
     //calander();
-    display_employees();
+    //display_employees();
     /*int p;
     press(&p);
     printf("%d\n",p);*/
