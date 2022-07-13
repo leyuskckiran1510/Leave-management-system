@@ -34,29 +34,30 @@ exit ${?}
 
 #include<time.h>
 
-//DevC++ user remove this below three lines of include if you are using any other compiler
-//!!!WINWODS'S !!!
-//remove this 3 lines mainly the third line don't you forget to remove this line
+
+//checking for if the system is running in linux or windows and defining the includes accordingly
+#ifdef _WIN32 ||  _WIN64
+//reference from https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#example-of-sgr-terminal-sequences
+    #include <wchar.h>
+    #include <windows.h>
+    #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+    #define ENABLE_VIRTUAL_TERMINAL_PROCESSING  0x0004
+    #endif
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hOut == INVALID_HANDLE_VALUE){return GetLastError();}DWORD dwMode = 0;
+    if (!GetConsoleMode(hOut, &dwMode)){return GetLastError();}
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    if (!SetConsoleMode(hOut, dwMode)){return GetLastError();}
+    #define printf(...) wprintf(L__VA_ARGS__)
+#else
 #include <unistd.h>
-
 #include <fcntl.h>
-
 #include <termios.h>
-
-//!!!WINWODS'S !!!
-//for windows users remove the comment to see the UI properly
-//and replace printf with wprintf
-/*
-#include <wchar.h>
-#include <windows.h>
-
-
-
-*/
+#endif
 
 //referenced from  https://en.wikipedia.org/wiki/ANSI_escape_code
 //title of the program using ANSI escape code
-#define title(k) printf("\033]0;%s\007", k);
+#define title(k) printf("\033]0;%s\007", k)
 
 struct employe {
     char id[50];
@@ -263,7 +264,9 @@ void modify_employee(struct employe b) {
 
 //function display_employee() is used to display the employee details from the user.txt file
 //with struct employee as parameter
-void display_employee(struct employe b) {
+void display_employee(char b[]) {
+    printf("\033]0;%s Detail's\007",b);
+    int i=0;
     FILE * fp;
     struct employe e;
     char doj[50];
@@ -273,10 +276,17 @@ void display_employee(struct employe b) {
         exit(0);
     }
     while (fscanf(fp, "%s %s %s %s %s %s %s %d %ld", e.id, e.name, e.dob, e.phone, e.email, e.password, e.type, & e.leaves, & e.doj) != EOF) {
-        if (strcmp(e.id, b.id) == 0) {
+        if (strcmp(e.id, b) == 0) {
             time_t t = e.doj;
             strcpy(doj, ctime( & t));
-            printf("%s %s %s %s %s %s %s  %d %s\n", e.id, e.name, e.dob, e.phone, e.email, e.password, e.type, e.leaves, doj);
+            printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s", 4 + i, 0, 150, 255, 0 * 31, e.id);
+            printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s", 4 + i, 16 * (1), 150, 255, (1) * 31, e.name);
+            printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s", 4 + i, 16 * (2), 150, 255, 2 * 31, e.dob);
+            printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s", 4 + i, 16 * (3), 150, 255, 3 * 31, e.phone);
+            printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s", 4 + i, 16 * (4), 150, 255, 4 * 31, e.email);
+            printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s", 4 + i, 16 * (5), 150, 255, 5 * 31, e.type);
+            printf("\033[%d;%dH\033[38;2;%d;%d;%dm%d", 4 + i, 16 * (6), 150, 255, 6 * 31, e.leaves);
+            printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s", 4 + i, 16 * (7), 150, 255, 7 * 31, doj);
         }
     }
     fclose(fp);
@@ -285,6 +295,7 @@ void display_employee(struct employe b) {
 //To display all the employees details from the user.txt file
 
 void display_employees() {
+    title("All Employee Details");
     FILE * fp;
     struct employe e;
     int i = 0;
@@ -355,6 +366,7 @@ char * epoch_to_date(int epoch) {
 
 //display employee details and leaves of the employee with the employee id
 void display_employee_leaves(char * id) {
+    title("Employee Leaves");
     FILE * fp;
     FILE * fp1;
     struct employe e;
@@ -401,9 +413,10 @@ void gen_id(struct employe * b) {
     strcpy(b -> id, str);
 }
 
-void login_screen(char * n, char * p) {
+void login_screen(char * n, char * p){
     //deginse of a login in screen with the name and password as parameters
     //using ansi escape sequence
+    title("LOGIN SCREEN");
     printf("\033[2J\033[1;1H\033[?25h\033[0m");
     printf("\033[10;50H\033[38;2;150;255;0mLogin Screen\033[0m\n");
     printf("\033[13;40H\033[38;2;150;255;31mEnter name:\033[0m\n");
@@ -419,6 +432,7 @@ void login_screen(char * n, char * p) {
 }
 //employee adding Screen
 void employee_add_Screen() {
+    title("EMPLOYEE ADD SCREEN");
     struct employe e;
     /*char *date;
     time_t t = time(NULL);
@@ -456,17 +470,8 @@ void employee_add_Screen() {
 
 int main() {
     int status;
-
-    //!!!WINWODS'S !!!
-    //reference from https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#example-of-sgr-terminal-sequences
-    /*//Uncomment this below 5 lines to see the UI of the program in windows only...
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (hOut == INVALID_HANDLE_VALUE){return GetLastError();}DWORD dwMode = 0;
-    if (!GetConsoleMode(hOut, &dwMode)){return GetLastError();}
-    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-    if (!SetConsoleMode(hOut, dwMode)){return GetLastError();}
-    */
-
+    //hide cursor
+    printf("x1b[?25l");
     //char name[50];
     //char password[50];
     //statically declare admin employee details 
@@ -476,7 +481,8 @@ int main() {
     //add_employee(admin);
     //delete_employee(e);
     //modify_employee(e);
-    //display_employee(e);
+    //display_employee("1657632111a");
+    //press(&status);
     //login_screen(name,password);
     //status=login(name,password);
     //printf("%d\n",status);
@@ -490,7 +496,7 @@ int main() {
     printf("%d\n",p);*/
     //display_leaves();
     //welcome screen wir text
-    title("Test132")
+    title("Test132");
     printf("\033[?25h\033[0m");
     printf("\033[2J\033[1;1H\033[?25h\033[0m");
     printf("\033[10;50H\033[38;2;150;255;0mWelcome to Employee Management System\033[0m\n");
@@ -504,5 +510,7 @@ int main() {
     scanf("%d", & status);
     printf("\033[2J\033[1;1H\033[?25h\033[0m");
 
+    //show cursor again
+    printf("x1b[?25h");
     return 0;
 }
