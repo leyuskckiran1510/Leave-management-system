@@ -33,24 +33,20 @@ exit ${?}
 #include<string.h>
 
 #include<time.h>
+#include "anisc.h"
 
 
 //checking for if the system is running in linux or windows and defining the includes accordingly
-#ifdef _WIN32 ||  _WIN64
-//reference from https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#example-of-sgr-terminal-sequences
-    #include <wchar.h>
-    #include <windows.h>
-    #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
-    #define ENABLE_VIRTUAL_TERMINAL_PROCESSING  0x0004
-    #endif
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (hOut == INVALID_HANDLE_VALUE){return GetLastError();}DWORD dwMode = 0;
-    if (!GetConsoleMode(hOut, &dwMode)){return GetLastError();}
-    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-    if (!SetConsoleMode(hOut, dwMode)){return GetLastError();}
-    #define printf(...) wprintf(L__VA_ARGS__)
+//and different functions are used for linux and windows
 
-    void press(int *key){
+#ifdef __APPLE__
+#include<unistd.h>
+#include<termios.h>
+#include<fcntl.h>
+
+#elif defined _WIN32 || defined _WIN64
+#define printf(...) wprintf(__VA_ARGS__)
+void press(int *key){
         * key = getchar();
     }
 #else
@@ -89,6 +85,7 @@ void press(int * key) {
 //referenced from  https://en.wikipedia.org/wiki/ANSI_escape_code
 //title of the program using ANSI escape code
 #define title(k) printf("\033]0;%s\007", k)
+
 
 struct employe {
     char id[50];
@@ -501,6 +498,6 @@ int main() {
     printf("\033[2J\033[1;1H\033[?25h\033[0m");
 
     //show cursor again
-    printf("x1b[?25h");
+    printf("\x1b[?25h");
     return 0;
 }

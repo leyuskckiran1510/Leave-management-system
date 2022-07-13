@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "anisc.h": "c",
+        "string.h": "c"
+    }
+}
