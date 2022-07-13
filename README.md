@@ -7,7 +7,7 @@ ANSI escape code sequences then everything will look  gibrish.
 2) Able to understand the proper comments and make changes accordinly based on your compiler; LINUX/UNIX user have nothing to worry about everythin is fine.
 3) LINUX/UNIX users don't CTRL+C during the `press()` function runtime. This may cause your current Terminal TAB act weird.
 4)For window's user uncomment certern code snippts and comment others as explained in the codes. For easy search
-       !!!WINWODS'S !!!
+4.1)            !!!WINWODS'S !!!
 in your code editor it is like a checkpoint so you dont's have to go through everysingle line of comments.
 
 #How To use (LINUX/UNIX)
