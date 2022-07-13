@@ -37,14 +37,26 @@ exit ${?}
 #include<time.h>
 
 //DevC++ user remove this below three lines of include if you are using any other compiler
+//!!!WINWODS'S !!!
+//remove this 3 lines mainly the third line don't you forget to remove this line
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
 
-//ansice code for screen clearing and moving cursor to the top left corner
+//!!!WINWODS'S !!!
+//for windows users remove the comment to see the UI properly
+//and replace printf with wprintf
+/*
+#include <wchar.h>
+#include <windows.h>
+
+
+
+*/
+
 //referenced from  https://en.wikipedia.org/wiki/ANSI_escape_code
-
-
+//title of the program using ANSI escape code
+#define title(k) printf("\033]0;%s\007",k);
 
 
 
@@ -71,7 +83,7 @@ struct leaves{
 };
 
 /*
-
+!!!WINWODS'S !!!
 REMOVE THIS PRESS FUNCTION AND REPLACE press(&key) with
 _____________                ___________________
 |press(&key);| ======>       |char key;        |    IF YOU ARE USING DEVC++
@@ -80,7 +92,8 @@ _____________                ___________________
 If you are DevC++ user 
 */
 
-
+//!!!WINWODS'S !!!
+//remove this function and follow above coment
 void press(int *key){
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     /* referenced from https://stackoverflow.com/questions/8101079/making-stdin-non-blocking*/
@@ -460,6 +473,24 @@ void employee_add_Screen(){
 
 int main(){
     int status;
+
+
+    //!!!WINWODS'S !!!
+    //reference from https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#example-of-sgr-terminal-sequences
+    /*//Uncomment this below 5 lines to see the UI of the program in windows only...
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hOut == INVALID_HANDLE_VALUE){return GetLastError();}DWORD dwMode = 0;
+    if (!GetConsoleMode(hOut, &dwMode)){return GetLastError();}
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    if (!SetConsoleMode(hOut, dwMode)){return GetLastError();}
+    */
+
+
+
+
+
+
+
     //char name[50];
     //char password[50];
     //statically declare admin employee details 
@@ -473,7 +504,7 @@ int main(){
     //login_screen(name,password);
     //status=login(name,password);
     //printf("%d\n",status);
-    employee_add_Screen();
+    //employee_add_Screen();
     
     //alert("Hello");
     //calander();
@@ -481,5 +512,21 @@ int main(){
     /*int p;
     press(&p);
     printf("%d\n",p);*/
+    //display_leaves();
+    //welcome screen wir text
+    title("Test132")
+    printf("\033[?25h\033[0m");
+    printf("\033[2J\033[1;1H\033[?25h\033[0m");
+    printf("\033[10;50H\033[38;2;150;255;0mWelcome to Employee Management System\033[0m\n");
+    printf("\033[12;40H\033[38;2;150;255;31mPress 1 to login\033[0m\n");
+    printf("\033[13;40H\033[38;2;150;255;62mPress 2 to add employee\033[0m\n");
+    printf("\033[14;40H\033[38;2;150;255;93mPress 3 to display employees\033[0m\n");
+    printf("\033[15;40H\033[38;2;150;255;124mPress 4 to display leaves\033[0m\n");
+    printf("\033[16;40H\033[38;2;150;255;155mPress 5 to display calander\033[0m\n");
+    printf("\033[17;40H\033[38;2;150;255;181mPress 6 to exit\033[0m\n");
+    printf("\033[12;56H\033[38;2;50;255;255m");
+    scanf("%d",&status);
+    printf("\033[2J\033[1;1H\033[?25h\033[0m");
+
     return 0;
 }
