@@ -49,48 +49,14 @@ exit ${?}
     dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
     if (!SetConsoleMode(hOut, dwMode)){return GetLastError();}
     #define printf(...) wprintf(L__VA_ARGS__)
+
+    void press(int *key){
+        * key = getchar();
+    }
 #else
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
-#endif
-
-//referenced from  https://en.wikipedia.org/wiki/ANSI_escape_code
-//title of the program using ANSI escape code
-#define title(k) printf("\033]0;%s\007", k)
-
-struct employe {
-    char id[50];
-    char name[50];
-    char dob[50];
-    char phone[50];
-    char email[50];
-    char password[50];
-    char type[50];
-    int leaves;
-    long int doj;
-};
-
-//struct leaves is used to store the leaves of the employee with 
-//the employee id and date is used to store the date of the leaves
-struct leaves {
-    char id[50];
-    long int date;
-
-};
-
-/*
-!!!WINWODS'S !!!
-REMOVE THIS PRESS FUNCTION AND REPLACE press(&key) with
-_____________                ___________________
-|press(&key);| ======>       |char key;        |    IF YOU ARE USING DEVC++
---------------               |key=getchar();   |
-                             -------------------
-If you are DevC++ user 
-*/
-
-//!!!WINWODS'S !!!
-//remove this function and follow above coment
 void press(int * key) {
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     /* referenced from https://stackoverflow.com/questions/8101079/making-stdin-non-blocking*/
@@ -118,7 +84,31 @@ void press(int * key) {
     tcsetattr(STDIN_FILENO, TCSANOW, & ttysave);
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 }
+#endif
 
+//referenced from  https://en.wikipedia.org/wiki/ANSI_escape_code
+//title of the program using ANSI escape code
+#define title(k) printf("\033]0;%s\007", k)
+
+struct employe {
+    char id[50];
+    char name[50];
+    char dob[50];
+    char phone[50];
+    char email[50];
+    char password[50];
+    char type[50];
+    int leaves;
+    long int doj;
+};
+
+//struct leaves is used to store the leaves of the employee with 
+//the employee id and date is used to store the date of the leaves
+struct leaves {
+    char id[50];
+    long int date;
+
+};
 //function login() is used to login the user with the given credentials
 //if the user is admin,manager or employee then it will return the user type
 //from user.txt file
