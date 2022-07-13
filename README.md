@@ -28,6 +28,6 @@ ANSI escape code sequences then everything will look  gibrish.
 3.      icacls ./LMS.c /grant Everyone:F
 4.      ./LMS.c
 
-## if this won't work try compiling mannually
+## if this won't work try compiling mannually (Windows/Any other Platform)
 3.      gcc -o LMS.c ./LMS.c && ./LMS.c
 
