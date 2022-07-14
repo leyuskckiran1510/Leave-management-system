@@ -685,12 +685,12 @@ int main() {
         else if(status==148) {
             printf("\033[11;45H\033[6mWRONG CREDENTIALS TRY AGAIN\033[0m");
             press(&fake_key);
-            goto login:
+            goto login;
         }
         else{
             printf("\033[11;45H\033[6mWRONG CREDENTIALS TRY AGAIN %d\033[0m",status);
             press(&fake_key);
-            goto login:
+            goto login;
         }
     }
     else if(status==50) {
