@@ -104,6 +104,31 @@ struct leaves {
     long int date;
 
 };
+
+
+//search engine for the employee id
+int search(char *id, struct employe *e) {
+    int i;
+    FILE *fp;
+    fp = fopen("user.txt", "r");
+    if (fp == NULL) {
+        printf("File not found\n");
+        return 0;
+    }
+    while(fscanf(fp, "%s %s %s %s %s %s %s %d %ld", e->id, e->name, e->dob,
+     e->phone, e->email, e->password, e->type, &e->leaves, &e->doj) != EOF) {
+        if (strcmp(id, e->id) == 0) {
+            fclose(fp);
+            return 1;
+        }
+    }
+    fclose(fp);
+    return 0;
+}
+
+
+
+
 //function login() is used to login the user with the given credentials
 //if the user is admin,manager or employee then it will return the user type
 //from user.txt file
@@ -472,14 +497,6 @@ void login_screen(char * n, char * p){
 
 }
 
-
-//modify employee screen
-void modify_employee_screen(){
-    printf("Was here");
-    int k;
-    press(&k);
-}
-
 //delet employee screen
 
 void delete_employee_screen(){
@@ -595,6 +612,129 @@ void employee_add_Screen() {
 }
 
 
+//employee modifying Screen
+void modify_employee_screen() {
+    title("EMPLOYEE ADD SCREEN");
+    struct employe e;
+    char id[15],doj[20];
+    int st,key;
+    while(1){
+
+        printf("\033[0J\033[1;1H\033[0m");
+        printf("\033[9;50H\033[38;2;150;255;0mModify Employee\033[0m\n");
+        printf("\033[12;40H\033[38;2;150;255;31mEnter ID:\033[0m\n");
+        printf("\033[12;56H\033[38;2;50;255;255m");
+        cs;
+        scanf("%s", id);
+        ch;
+        fflush(stdin);
+        press(&key);
+        printf("\033[0m\n");
+        st = search(id, &e);
+        if(st==1){
+            printf("\033[0J\033[1;1H\033[0m");
+            break;
+        }
+        else{
+            printf("\033[8;50H\033[38;2;150;255;0mEmployee with id %s not found Try Again\033[0m\n",id);
+            printf("\033[8;50H\033[38;2;150;255;0mPRESS (Y or 1) to Tryagain OR other to exit\033[0m\n");
+            press(&key);
+            if(key!='y' && key!='Y' && key!='1') return;
+        }
+    }
+    cs;
+    while(1){
+    printf("\033[0J\033[1;1H\033[0m");
+    time_t t = e.doj;
+    strcpy(doj, ctime( & t));
+    printf("\033[9;50H\033[38;2;150;255;0mModifying Employee \033[0m\n");
+    printf("\033[10;10H\033[38;2;180;255;0mID: %s\033[0m\n",e.id);
+    printf("\033[10;65H\033[38;2;220;255;0mJoined AT %s\033[0m\n",doj);
+    printf("\033[12;40H\033[38;2;150;255;31mCHANGE NAME:    %s\033[0m\n",e.name);
+    printf("\033[13;40H\033[38;2;150;255;62mCHANGE DOB:     %s\033[0m\n",e.dob);
+    printf("\033[14;40H\033[38;2;150;255;93mCHANGE PHONE:   %s\033[0m\n",e.phone);
+    printf("\033[15;40H\033[38;2;150;255;124mCHANGE EMAIL:   %s\033[0m\n",e.email);
+    printf("\033[16;40H\033[38;2;150;255;155mCHANGE PASSWORD:%s\033[0m\n",e.password);
+    printf("\033[17;40H\033[38;2;150;255;181mCHANGE TYPE:    %s\033[0m\n",e.type);
+    printf("\033[20;40H\033[38;2;250;255;111mPress S to Save and C To Cancel\033[0m\n");
+    press(&key);
+    cs;
+    if(key==49){
+        printf("\033[0m\n");
+        printf("\033[12;56H\033[38;2;150;255;255m                                                 ");
+        printf("\033[12;56H\033[38;2;150;255;255m");
+        scanf("%s",e.name);
+        fflush(stdin);
+        printf("\033[0m\n");
+    }
+    else if(key==50){
+        printf("\033[0m\n");
+        printf("\033[13;56H\033[38;2;150;255;255m                                                 ");
+        printf("\033[13;56H\033[38;2;150;255;255m");
+        scanf("%s",e.dob);
+        fflush(stdin);
+        printf("\033[0m\n");
+    }
+    else if(key==51){
+        printf("\033[0m\n");
+        printf("\033[14;56H\033[38;2;150;255;255m                                                 ");
+        printf("\033[14;56H\033[38;2;150;255;255m");
+        scanf("%s",e.phone);
+        fflush(stdin);
+        printf("\033[0m\n");
+    }
+    else if(key==52){
+        printf("\033[0m\n");
+        printf("\033[15;56H\033[38;2;150;255;255m                                                 ");
+        printf("\033[15;56H\033[38;2;150;255;255m");
+        scanf("%s",e.email);
+        fflush(stdin);
+        printf("\033[0m\n");
+    }
+    else if(key==53){
+        printf("\033[0m\n");
+        printf("\033[16;56H\033[38;2;150;255;255m                                                 ");
+        printf("\033[16;56H\033[38;2;150;255;255m");
+        scanf("%s",e.password);
+        fflush(stdin);
+        printf("\033[0m\n");
+    }
+    else if(key==54){
+        printf("\033[0m\n");
+        printf("\033[17;56H\033[38;2;150;255;255m                                                 ");
+        printf("\033[17;56H\033[38;2;150;255;255m");
+        scanf("%s",e.type);
+        fflush(stdin);
+        printf("\033[0m\n");
+    }
+    else if(key=='s'){
+        printf("\033[0m\n");
+        printf("\033[20;56H\033[38;2;150;255;255m                                                 ");
+        printf("\033[20;56H\033[38;2;150;255;255mCONFIRMING CHANGES(Y/N)\033[0m\n");
+        press(&key);
+        if(key=='y'){
+            modify_employee(e);
+            return;
+        }
+        else if(key=='n'){
+            continue;
+        }
+    }
+    else if(key=='c' || key=='C'){
+        ch;
+        printf("EXITING THE MODIFICATION UNSAVED");
+        press(&key);
+        return;
+    }
+    ch;
+    }
+}
+
+
+
+
+
+
 void admin_screen( char * n, char * p) {
     title("ADMIN SCREEN");
     printf("\033[0J\033[1;1H\033[0m");
@@ -620,41 +760,35 @@ void menu1(){
     printf("\033[12;56H\033[38;2;50;255;255m");
 }
 
-
 int main() {
     setupConsole();
-    int status;
-    ch;
     //hide cursor
+    ch;
     printf("\x1b[?25l");
     char name[50];
     char password[50];
-    char a;
-    int fake_key;
-    int save_pass;
     int key1,key2,key3,key4,key5,key6;
+    press(&key6);
+
     //statically declare admin employee details 
     //struct employe admin={"admin!","admin","2022/1/1","+9779800000000","admin@admin.com","696969","admin",10,10};
     while(1){
-    printf("\033[0J\033[1;1H\033[0m");
-    printf("\033[0J\033[1;1H\033[0m");
+    printf("\033[1J\033[1;1H\033[0m");
     menu1();
-    //printf("-----%d------",status);
     press(&key1);
-    //ascii values of 1,2,3,4 are 49,50,51,52
     if(key1==49) {
     	login:
         printf("\033[0J\033[1;1H\033[0m");
         login_screen(name,password);
         getchar();
-        status=login(name,password);
-        if(status!=148){
+        key5=login(name,password);
+        if(key5!=148){
         printf("\033[11;50H\033[38;2;255;50;255mDO YOU WANT TO save Credentials(1/0)");
         press(&key2);
         printf("\033[11;50H\033[38;2;255;50;255m                                         ");
         }
         //if admin
-        if(status==149) {
+        if(key5==149) {
                                 Asaved:
                                 printf("\033[0J\033[1;1H\033[0m");
                                 admin_screen(name,password);
@@ -679,35 +813,32 @@ int main() {
                                 else if(key3==53) {
                                     printf("\033[0J\033[1;1H\033[0m");
                                     modify_employee_screen();
+                                    
                                 }
                                 else if(key3==54) {
                                     printf("\033[0J\033[1;1H\033[0m");
                                     calander();
                                 }
                                 else{
+                                    key2=0;
                                     continue;
                                 }
         }
         //if manager
-        else if(status==150) {
+        else if(key5==150) {
         			 Msaved:
                                 printf("\033[0J\033[1;1H\033[0m");
                                 employee_add_Screen();
         }
         //if employee
-        else if(status==151) {
+        else if(key5==151) {
             Esaved:
             printf("\033[0J\033[1;1H\033[0m");
             display_employees();
         }
-        else if(status==148) {
-            printf("\033[11;45H\033[6mWRONG CREDENTIALS TRY AGAIN\033[0m");
-            press(&fake_key);
-            goto login;
-        }
         else{
-            printf("\033[11;45H\033[6mWRONG CREDENTIALS TRY AGAIN %d\033[0m",status);
-            press(&fake_key);
+            printf("\033[11;45H\033[6mWRONG CREDENTIALS TRY AGAIN %d\033[0m",key5);
+            press(&key4);
             goto login;
         }
     }
@@ -722,17 +853,17 @@ int main() {
     printf("\033[0J\033[1;1H\033[0m");
 
     //show cursor again
-    if(key2==49 && status==149) {
+    if(key2==49 && key5==149) {
         goto Asaved;
     }
-    else if(key2==49 && status==150) {
+    else if(key2==49 && key5==150) {
         goto Msaved;
     }
-    else if(key2==49 && status==151) {
+    else if(key2==49 && key5==151) {
         goto Esaved;
     }
     else{
-        press(&fake_key);
+        //press(&key4);
         continue;
     }
     }
