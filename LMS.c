@@ -181,6 +181,7 @@ void calander() {
 void add_employee(struct employe b) {
     FILE * fp;
     struct employe e;
+    int k ;
     fp = fopen("user.txt", "r+");
     if (fp == NULL) {
         printf("Error in opening file\n");
@@ -200,11 +201,15 @@ void add_employee(struct employe b) {
     b.doj = time_epoch;
     fprintf(fp, "%s %s %s %s %s %s %s %d %ld\n", b.id, b.name, b.dob, b.phone, b.email, b.password, b.type, b.leaves, b.doj);
     fclose(fp);
+    printf("Employee added successfully\n");
+    printf("Your employee id is %s\n", b.id);
+    printf("Press Any Key To Continue");
+    press(&k);
 }
 
 //function delete_employee() is used to delete the employee details from the user.txt file
 //with struct employee as parameter
-void delete_employee(struct employe b) {
+void delete_employee(char * id) {
     FILE * fp;
     FILE * fp1;
     struct employe e;
@@ -215,7 +220,7 @@ void delete_employee(struct employe b) {
         exit(0);
     }
     while (fscanf(fp, "%s %s %s %s %s %s %s %d %ld", e.id, e.name, e.dob, e.phone, e.email, e.password, e.type, & e.leaves, & e.doj) != EOF) {
-        if (strcmp(e.id, b.id) != 0) {
+        if (strcmp(e.id, id) != 0) {
             fprintf(fp1, "%s %s %s %s %s %s %s  %d %ld\n", e.id, e.name, e.dob, e.phone, e.email, e.password, e.type, e.leaves, e.doj);
         }
     }
@@ -727,7 +732,6 @@ int main() {
         goto Esaved;
     }
     else{
-        printf("%d %d",key2,status);
         press(&fake_key);
         continue;
     }
