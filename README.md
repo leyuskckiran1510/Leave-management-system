@@ -1,4 +1,4 @@
-# C
+# Leave Managemnet System in C (CLI based)
 C programes for simple class wroks
 
 # THINGS TO UNDERSTAND BEFORE USING THIS CODE
