@@ -119,8 +119,7 @@ int login(char * username, char * password) {
         //print username and password from the file and given password and username are compared
         if (strcmp(username, e.name) == 0 && strcmp(password, e.password) == 0) {
             fclose(fp);
-            printf("Login Successful\n");
-            
+            printf("\033[10;50H\033[6;38;250;255;50;255mLOGIN SUCESSFULLY\033[0m\n");
             //return 1 if the user is admin , 2 if the user is manager , 3 if the user is employee
             if (strcmp(e.type, "admin") == 0)
                 return 149;
@@ -260,11 +259,29 @@ void display_employee(struct employe b) {
     FILE * fp;
     struct employe e;
     char doj[50];
+    int count = 0;
+    int key;
+    char * title[] = {
+        "ID",
+        "Name",
+        "DOB",
+        "Phone",
+        "Email",
+        "Type",
+        "Leaves",
+        "DOJ"
+    };
     fp = fopen("user.txt", "r");
     if (fp == NULL) {
         printf("Error in opening file\n");
         exit(0);
     }
+    printf("\033[0J\033[1;1H\033[0m");
+    printf("\033[%d;%dH", 3, 5);
+    for (int j = 0; j < 8; j++) {
+        printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s\t", 3, 16 * j, 150, 255, j * 31, title[j]);
+    }
+    i = 2;
     while (fscanf(fp, "%s %s %s %s %s %s %s %d %ld", e.id, e.name, e.dob, e.phone, e.email, e.password, e.type, & e.leaves, & e.doj) != EOF) {
         if (
                 strcmp(e.id, b.id) == 0 || strcmp(e.name, b.name) == 0 ||
@@ -284,6 +301,19 @@ void display_employee(struct employe b) {
             printf("\033[%d;%dH\033[38;2;%d;%d;%dm%d", 4 + i, 16 * (6), 150, 255, 6 * 31, e.leaves);
             printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s", 4 + i, 16 * (7), 150, 255, 7 * 31, doj);
             i++;
+        count++;
+        if (count >= 10) {
+            printf("\033[%d;%dH%s", 26, 5, "Press S to continue or any other key to exit");
+            press( & key);
+            if (key == 's' || key == 'S') {
+                count = 0; //
+                printf("\033[%d;%dH%s", 26, 5, "                                            ");
+                continue;
+            } else {
+                printf("\033[%d;%dH%s", 26, 5, "                                            ");
+                break;
+            }
+        }
         }
     }
     printf("Press any key to continue...");
@@ -459,7 +489,7 @@ void display_employee_screen() {
     title("EMPLOYEE ADD SCREEN");
     struct employe e;
     int key;
-    cs;
+    ch;
     printf("\033[0J\033[1;1H\033[0m");
     printf("\033[9;50H\033[38;2;150;255;0mSearch By\033[0m\n");
     printf("\033[12;40H\033[38;2;150;255;31m1|NAME:\033[0m\n");
@@ -470,6 +500,7 @@ void display_employee_screen() {
     printf("\033[17;40H\033[38;2;150;255;181m6|TYPE:\033[0m\n");
     printf("\033[12;56H\033[38;2;50;255;255m");
     press(&key);
+    cs;
     if(key==49){
         printf("\033[0m\n");
         printf("\033[12;56H\033[38;2;150;255;255m");
@@ -514,9 +545,6 @@ void display_employee_screen() {
     }
     ch;
     printf("\033[0J\033[1;1H\033[0m");
-    printf("Was here with followin values");
-    printf("%s %s %s %s %ld %d\n",e.name,e.dob,e.phone,e.email,e.doj,e.leaves);
-    press(&key);
     display_employee(e);
 }
 
@@ -599,70 +627,55 @@ int main() {
     char a;
     int fake_key;
     int save_pass;
+    int key1,key2,key3,key4,key5,key6;
     //statically declare admin employee details 
     //struct employe admin={"admin!","admin","2022/1/1","+9779800000000","admin@admin.com","696969","admin",10,10};
-    //gen_id(&admin);
-    //printf("%s\n",admin.id);
-    //add_employee(admin);
-    //delete_employee(e);
-    //modify_employee(e);
-    //display_employee("1657632111a");
-    //press(&status);
-    //login_screen(name,password);
-    //status=login(name,password);
-    //printf("%d\n",status);
-    //employee_add_Screen();
-
-    //alert("Hello");
-    //display_employees();
-    /*int p;
-    press(&p);
-    printf("%d\n",p);*/
-    //display_leaves();
-    //welcome screen wir text
-    press(&status);
     while(1){
     printf("\033[0J\033[1;1H\033[0m");
     printf("\033[0J\033[1;1H\033[0m");
     menu1();
-    press(&status);
+    //printf("-----%d------",status);
+    press(&key1);
     //ascii values of 1,2,3,4 are 49,50,51,52
-    if(status==49) {
+    if(key1==49) {
     	login:
         printf("\033[0J\033[1;1H\033[0m");
         login_screen(name,password);
         getchar();
         status=login(name,password);
-        printf("\033[11;56H\033[6;38;2;255;50;255mDO YOU WANT TO save Credentials(1/0)");
-        press(&save_pass);
+        if(status!=148){
+        printf("\033[11;50H\033[38;2;255;50;255mDO YOU WANT TO save Credentials(1/0)");
+        press(&key2);
+        printf("\033[11;50H\033[38;2;255;50;255m                                         ");
+        }
         //if admin
         if(status==149) {
                                 Asaved:
                                 printf("\033[0J\033[1;1H\033[0m");
                                 admin_screen(name,password);
-                                press(&status);
-                                if(status==49) {
+                                press(&key3);
+                                if(key3==49) {
                                     //clear screen
                                     printf("\033[0J\033[1;1H\033[0m");
                                     employee_add_Screen();
                                 }
-                                else if(status==50) {
+                                else if(key3==50) {
                                     printf("\033[0J\033[1;1H\033[0m");
                                     display_employee_screen();
                                 }
-                                else if(status==51) {
+                                else if(key3==51) {
                                     printf("\033[0J\033[1;1H\033[0m");
                                     display_employees();
                                 }
-                                else if(status==52) {
+                                else if(key3==52) {
                                     printf("\033[0J\033[1;1H\033[0m");
                                     delete_employee_screen();
                                 }
-                                else if(status==53) {
+                                else if(key3==53) {
                                     printf("\033[0J\033[1;1H\033[0m");
                                     modify_employee_screen();
                                 }
-                                else if(status==54) {
+                                else if(key3==54) {
                                     printf("\033[0J\033[1;1H\033[0m");
                                     calander();
                                 }
@@ -693,27 +706,29 @@ int main() {
             goto login;
         }
     }
-    else if(status==50) {
+    else if(key1==50) {
         printf("\033[0J\033[1;1H\033[0m");
         calander();
     }
-    else if(status==51) {
+    else if(key1==51) {
         printf("\033[0J\033[1;1H\033[0m");
         break;
     }
     printf("\033[0J\033[1;1H\033[0m");
 
     //show cursor again
-    if(save_pass==149){
+    if(key2==49 && status==149) {
         goto Asaved;
     }
-    else if(save_pass==150){
+    else if(key2==49 && status==150) {
         goto Msaved;
     }
-    else if(save_pass==151){
+    else if(key2==49 && status==151) {
         goto Esaved;
     }
     else{
+        printf("%d %d",key2,status);
+        press(&fake_key);
         continue;
     }
     }

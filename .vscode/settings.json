@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "anisc.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "types.h": "c",
+        "termios.h": "c"
     }
 }
