@@ -420,7 +420,7 @@ void display_employees() {
     }
     fclose(fp);
     printf("\033[%d;%dH%s\033[26,32H", 26, 5, "Press any key to continue");
-    press(&key);
+   ch; press(&key);cs;
     printf("\033[0J\033[1;1H");
 }
 
@@ -469,7 +469,9 @@ void display_employee_leaves(char * id) {
     fclose(fp);
 }
 
-void display_leaves(){}
+void display_leaves(){
+
+}
 
 
 void gen_id(struct employe * b) {
@@ -508,9 +510,53 @@ void login_screen(char * n, char * p){
 //delet employee screen
 
 void delete_employee_screen(){
-    printf("Was here");
-    int k;
-    press(&k);
+    title("EMPLOYEE DELET SCREEN");
+    struct employe e;
+    char id[50],doj[50];
+    int st,key;
+    while(1){
+        printf("\033[0J\033[1;1H\033[0m");
+        printf("\033[9;50H\033[38;2;150;255;0mDelet Employee\033[0m\n");
+        printf("\033[12;40H\033[38;2;150;255;31mEnter ID:\033[0m\n");
+        printf("\033[12;56H\033[38;2;50;255;255m");
+        cs;
+        scanf("%s", id);
+        ch;
+        fflush(stdin);
+       ch; press(&key);cs;
+        printf("\033[0m\n");
+        st = search(id, &e);
+        if(st==1){
+            printf("\033[0J\033[1;1H\033[0m");
+            break;
+        }
+        else{
+            printf("\033[8;50H\033[38;2;150;255;0mEmployee with id %s not found Try Again\033[0m\n",id);
+            printf("\033[9;50H\033[38;2;150;255;0mPRESS (Y or 1) to Try Again OR other to exit\033[0m\n");
+           ch; press(&key);cs;
+            if(key!='y' && key!='Y' && key!='1') return;
+        }
+    }
+    printf("\033[0J\033[1J\033[1;1H\033[0m");
+    printf("\033[9;50H\033[38;2;150;255;0mThis informations will be erased forever and can't be recovered.\033[0m\n");
+    printf("\033[10;10H\033[38;2;180;255;0mID: %s\033[0m\n",e.id);
+    printf("\033[10;65H\033[38;2;220;255;0mJoined AT %s\033[0m\n",doj);
+    printf("\033[12;40H\033[38;2;150;255;31m1|CHANGE NAME:    %s\033[0m\n",e.name);
+    printf("\033[13;40H\033[38;2;150;255;62m2|CHANGE DOB:     %s\033[0m\n",e.dob);
+    printf("\033[14;40H\033[38;2;150;255;93m3|CHANGE PHONE:   %s\033[0m\n",e.phone);
+    printf("\033[15;40H\033[38;2;150;255;124m4|CHANGE EMAIL:   %s\033[0m\n",e.email);
+    printf("\033[16;40H\033[38;2;150;255;155m5|CHANGE PASSWORD:%s\033[0m\n",e.password);
+    printf("\033[17;40H\033[38;2;150;255;181m6|CHANGE TYPE:    %s\033[0m\n",e.type);
+    printf("\033[20;40H\033[38;2;250;255;111mPress S to Continue Deletaion\033[0m\n");
+   ch; press(&key);cs;
+    if(key=='S' || key=='s'){
+    delete_employee(e.id);
+    }
+    else{
+        return;
+    }
+    return;
+   
 }
 
 //displya employee selectivly
@@ -529,7 +575,7 @@ void display_employee_screen() {
     printf("\033[16;40H\033[38;2;150;255;155m5|DOJ in epochs:\033[0m\n");
     printf("\033[17;40H\033[38;2;150;255;181m6|TYPE:\033[0m\n");
     printf("\033[12;56H\033[38;2;50;255;255m");
-    press(&key);
+   ch; press(&key);cs;
     cs;
     if(key==49){
         printf("\033[0m\n");
@@ -635,7 +681,7 @@ int modify_employee_screen() {
         scanf("%s", id);
         ch;
         fflush(stdin);
-        press(&key);
+       ch; press(&key);cs;
         printf("\033[0m\n");
         st = search(id, &e);
         if(st==1){
@@ -644,8 +690,8 @@ int modify_employee_screen() {
         }
         else{
             printf("\033[8;50H\033[38;2;150;255;0mEmployee with id %s not found Try Again\033[0m\n",id);
-            printf("\033[8;50H\033[38;2;150;255;0mPRESS (Y or 1) to Tryagain OR other to exit\033[0m\n");
-            press(&key);
+            printf("\033[9;50H\033[38;2;150;255;0mPRESS (Y or 1) to Try Again OR other to exit\033[0m\n");
+           ch; press(&key);cs;
             if(key!='y' && key!='Y' && key!='1') return 0;
         }
     }
@@ -664,7 +710,7 @@ int modify_employee_screen() {
     printf("\033[16;40H\033[38;2;150;255;155m5|CHANGE PASSWORD:%s\033[0m\n",e.password);
     printf("\033[17;40H\033[38;2;150;255;181m6|CHANGE TYPE:    %s\033[0m\n",e.type);
     printf("\033[20;40H\033[38;2;250;255;111mPress S to Save and C To Cancel\033[0m\n");
-    press(&key);
+   ch; press(&key);cs;
     cs;
     if(key==49){
         printf("\033[0m\n");
@@ -716,9 +762,9 @@ int modify_employee_screen() {
     }
     else if(key=='s'){
         printf("\033[0m\n");
-        printf("\033[20;58H\033[38;2;150;255;255m                                                 ");
-        printf("\033[20;58H\033[38;2;150;255;255mCONFIRMING CHANGES(Y/N)\033[0m\n");
-        press(&key);
+        printf("\033[20;40H\033[38;2;150;255;255m                                                                                 ");
+        printf("\033[20;58H\033[38;2;150;255;255mCONFIRMING CHANGES(Y/N)\033[0m");
+       ch; press(&key);cs;
         if(key=='y'){
             modify_employee(e);
             
@@ -731,7 +777,7 @@ int modify_employee_screen() {
     else if(key=='c' || key=='C'){
         ch;
         printf("EXITING THE MODIFICATION UNSAVED");
-        press(&key);
+       ch; press(&key);cs;
         break;
     }
     ch;
@@ -761,7 +807,7 @@ void admin_screen( char * n, char * p) {
 
 void menu1(){
     title("Welcome To LMS by Kiran");
-    printf("\033[1J\033[1;1H\033[0m");
+    printf("\033[1J\033[0J\033[1;1H\033[0m");
     printf("\033[10;50H\033[38;2;150;255;0mWelcome to Employee Management System\033[0m\n");
     printf("\033[11;40H\033[38;2;150;255;31mPress 1 to LOGIN\033[0m\n");
     printf("\033[12;40H\033[38;2;150;255;155mPress 2 to DISPLAY CALANDER\033[0m\n");
@@ -782,7 +828,7 @@ int main() {
     //statically declare admin employee details 
     //struct employe admin={"admin!","admin","2022/1/1","+9779800000000","admin@admin.com","696969","admin",10,10};
     while(1){
-    printf("\033[1J\033[1;1H\033[0m");
+    printf("\033[1J\033[0J\033[1;1H\033[0m");
     menu1();
     press(&key1);
     if(key1==49) {
