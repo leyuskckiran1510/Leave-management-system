@@ -145,7 +145,6 @@ int login(char * username, char * password) {
         if (strcmp(username, e.name) == 0 && strcmp(password, e.password) == 0) {
             fclose(fp);
             printf("\033[10;50H\033[6;38;250;255;50;255mLOGIN SUCESSFULLY\033[0m\n");
-            //return 1 if the user is admin , 2 if the user is manager , 3 if the user is employee
             if (strcmp(e.type, "admin") == 0)
                 return 149;
             else if (strcmp(e.type, "manager") == 0)
@@ -322,7 +321,7 @@ void display_employee(struct employe b) {
         if (
                 strcmp(e.id, b.id) == 0 || strcmp(e.name, b.name) == 0 ||
                 strcmp(e.dob, b.dob) == 0 || strcmp(e.phone, b.phone) == 0 ||
-                strcmp(e.email, b.email) == 0 || strcmp(e.password, b.password) == 0 ||
+                strcmp(e.email, b.email) == 0 ||
                 strcmp(e.type, b.type) == 0 ||
                 e.doj==b.doj
             ) {
@@ -794,6 +793,22 @@ void admin_screen( char * n, char * p) {
     title("ADMIN SCREEN");
     printf("\033[0J\033[1;1H\033[0m");
     printf("\033[10;50H\033[38;2;150;255;0mAdmin Screen\033[0m\n");
+    printf("\033[12;40H\033[38;2;150;255;31m1|Add Employee\033[0m\n");
+    printf("\033[13;40H\033[38;2;150;255;62m2|View Employee\033[0m\n");
+    printf("\033[14;40H\033[38;2;150;255;93m3|View All Employee\033[0m\n");
+    printf("\033[15;40H\033[38;2;150;255;124m4|Delete Employee\033[0m\n");
+    printf("\033[16;40H\033[38;2;150;255;124m5|Modify Employee\033[0m\n");
+    printf("\033[17;40H\033[38;2;150;255;155m6|Calander\033[0m\n");
+    printf("\033[20;40H\033[38;2;150;255;186mANY OTHER KEY TO EXIT\033[0m\n");
+    printf("\033[0J");
+    
+}
+
+
+void manager_screen( char * n, char * p) {
+    title("MANAGER SCREEN");
+    printf("\033[0J\033[1;1H\033[0m");
+    printf("\033[10;50H\033[38;2;150;255;0mManager Screen\033[0m\n");
     printf("\033[12;40H\033[38;2;150;255;31m1|Add Employee\033[0m\n");
     printf("\033[13;40H\033[38;2;150;255;62m2|View Employee\033[0m\n");
     printf("\033[14;40H\033[38;2;150;255;93m3|View All Employee\033[0m\n");
