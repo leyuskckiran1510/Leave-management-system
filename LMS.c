@@ -621,7 +621,8 @@ void display_employee_screen()
     title("EMPLOYEE ADD SCREEN");
     // initialize empty employee struct
     struct employe e;
-    // clear all the values of the employee struct
+    // clear all the values of the employee struct 
+    // just clear out the memory this is is quickest
     memset(&e, 0, sizeof(e));
     int key;
     ch;
