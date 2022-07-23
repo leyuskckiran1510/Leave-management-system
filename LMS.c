@@ -32,6 +32,10 @@ exit ${?}
 #include <time.h>
 #include "anisc.h"
 
+
+#define title(k) printf("\033]0;%s\007", k)
+#define ch printf("\033[?25l"); // hiding cursor
+#define cs printf("\033[?25h"); // showing cursor
 // checking for if the system is running in linux or windows and defining the includes accordingly
 // and different functions are used for linux and windows
 
@@ -43,7 +47,10 @@ exit ${?}
 #elif defined _WIN32 || defined _WIN64
 void press(int *key)
 {
+    ch;
+    fflush(stdin);
     *key = getchar();
+    cs;
 }
 #else
 #include <unistd.h>
@@ -67,7 +74,10 @@ void press(int *key)
     tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     // key press to contin
+    fflush(stdin);
+    ch;
     *key = getchar();
+    cs;
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     // stackoverflow code
     // reverting back to canonical mode and echo to avoid terminal crashes after the program is complete
@@ -81,9 +91,7 @@ void press(int *key)
 
 // referenced from  https://en.wikipedia.org/wiki/ANSI_escape_code
 // title of the program using ANSI escape code
-#define title(k) printf("\033]0;%s\007", k)
-#define ch printf("\033[?25l"); // hiding cursor
-#define cs printf("\033[?25h"); // showing cursor
+
 
 struct employe
 {
@@ -380,8 +388,6 @@ void display_employee(struct employe b)
         }
     }
     printf("Press any key to continue...");
-    fflush(stdin);
-    press(&i);
     press(&i);
     fclose(fp);
 }
@@ -453,9 +459,7 @@ void display_employees()
     }
     fclose(fp);
     printf("\033[%d;%dH%s\033[26,32H", 26, 5, "Press any key to continue");
-    ch;
     press(&key);
-    cs;
     printf("\033[0J\033[1;1H");
 }
 
@@ -564,13 +568,9 @@ void delete_employee_screen()
         printf("\033[9;50H\033[38;2;150;255;0mDelet Employee\033[0m\n");
         printf("\033[12;40H\033[38;2;150;255;31mEnter ID:\033[0m\n");
         printf("\033[12;56H\033[38;2;50;255;255m");
-        cs;
         scanf("%s", id);
-        ch;
         fflush(stdin);
-        ch;
         press(&key);
-        cs;
         printf("\033[0m\n");
         st = search(id, &e);
         if (st == 1)
@@ -582,9 +582,7 @@ void delete_employee_screen()
         {
             printf("\033[8;50H\033[38;2;150;255;0mEmployee with id %s not found Try Again\033[0m\n", id);
             printf("\033[9;50H\033[38;2;150;255;0mPRESS (Y or 1) to Try Again OR other to exit\033[0m\n");
-            ch;
             press(&key);
-            cs;
             if (key != 'y' && key != 'Y' && key != '1')
                 return;
         }
@@ -600,9 +598,7 @@ void delete_employee_screen()
     printf("\033[16;40H\033[38;2;150;255;155m5|CHANGE PASSWORD:%s\033[0m\n", e.password);
     printf("\033[17;40H\033[38;2;150;255;181m6|CHANGE TYPE:    %s\033[0m\n", e.type);
     printf("\033[20;40H\033[38;2;250;255;111mPress S to Continue Deletaion\033[0m\n");
-    ch;
     press(&key);
-    cs;
     if (key == 'S' || key == 's')
     {
         delete_employee(e.id);
@@ -625,7 +621,6 @@ void display_employee_screen()
     // just clear out the memory this is is quickest
     memset(&e, 0, sizeof(e));
     int key;
-    ch;
     printf("\033[0J\033[1;1H\033[0m");
     printf("\033[9;50H\033[38;2;150;255;0mSearch By\033[0m\n");
     printf("\033[12;40H\033[38;2;150;255;31m1|NAME:\033[0m\n");
@@ -635,10 +630,7 @@ void display_employee_screen()
     printf("\033[16;40H\033[38;2;150;255;155m5|DOJ in epochs:\033[0m\n");
     printf("\033[17;40H\033[38;2;150;255;181m6|TYPE:\033[0m\n");
     printf("\033[12;56H\033[38;2;50;255;255m");
-    ch;
     press(&key);
-    cs;
-    cs;
     if (key == 49)
     {
         printf("\033[0m\n");
@@ -750,9 +742,7 @@ int modify_employee_screen()
         scanf("%s", id);
         ch;
         fflush(stdin);
-        ch;
         press(&key);
-        cs;
         printf("\033[0m\n");
         st = search(id, &e);
         if (st == 1)
@@ -764,14 +754,11 @@ int modify_employee_screen()
         {
             printf("\033[8;50H\033[38;2;150;255;0mEmployee with id %s not found Try Again\033[0m\n", id);
             printf("\033[9;50H\033[38;2;150;255;0mPRESS (Y or 1) to Try Again OR other to exit\033[0m\n");
-            ch;
             press(&key);
-            cs;
             if (key != 'y' && key != 'Y' && key != '1')
                 return 0;
         }
     }
-    cs;
     while (1)
     {
         printf("\033[0J\033[1;1H\033[0m");
@@ -787,9 +774,7 @@ int modify_employee_screen()
         printf("\033[16;40H\033[38;2;150;255;155m5|CHANGE PASSWORD:%s\033[0m\n", e.password);
         printf("\033[17;40H\033[38;2;150;255;181m6|CHANGE TYPE:    %s\033[0m\n", e.type);
         printf("\033[20;40H\033[38;2;250;255;111mPress S to Save and C To Cancel\033[0m\n");
-        ch;
         press(&key);
-        cs;
         cs;
         if (key == 49)
         {
@@ -850,9 +835,7 @@ int modify_employee_screen()
             printf("\033[0m\n");
             printf("\033[20;40H\033[38;2;150;255;255m                                                                                 ");
             printf("\033[20;58H\033[38;2;150;255;255mCONFIRMING CHANGES(Y/N)\033[0m");
-            ch;
             press(&key);
-            cs;
             if (key == 'y')
             {
                 modify_employee(e);
@@ -867,11 +850,8 @@ int modify_employee_screen()
         }
         else if (key == 'c' || key == 'C')
         {
-            ch;
             printf("EXITING THE MODIFICATION UNSAVED");
-            ch;
             press(&key);
-            cs;
             break;
         }
         ch;
@@ -1028,10 +1008,6 @@ int main()
             break;
         }
         printf("\033[0J\033[1;1H\033[0m");
-
-        // show cursor again
-        cs;
-
         if (key2 == 49 && key5 == 149)
         {
             goto Asaved;
@@ -1050,6 +1026,7 @@ int main()
             continue;
         }
     }
+    cs;
     printf("\x1b[?25h");
     printf("\033[0J\033[1;1H\033[0m");
     restoreConsole();
