@@ -312,7 +312,6 @@ void modify_employee(struct employe b)
 void display_employee(struct employe b)
 {
     title("Employee Details(FILTRED)");
-    printf("\033]0;%s Detail's\007", b.name);
     int i = 0;
     FILE *fp;
     struct employe e;
@@ -433,7 +432,6 @@ void display_employees()
         printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s", 4 + i, 16 * (5), 150, 255, 5 * 31, e.type);
         printf("\033[%d;%dH\033[38;2;%d;%d;%dm%d", 4 + i, 16 * (6), 150, 255, 6 * 31, e.leaves);
         printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s", 4 + i, 16 * (7), 150, 255, 7 * 31, doj);
-        // printf("\033[%d;%dH%s %s %s %s %s %s %s  %d %s",3,16*i,e.id,e.name,e.dob,e.phone,e.email,e.password,e.type,e.leaves,doj);
         i++;
         count++;
         if (count >= 10)
@@ -621,7 +619,10 @@ void delete_employee_screen()
 void display_employee_screen()
 {
     title("EMPLOYEE ADD SCREEN");
+    // initialize empty employee struct
     struct employe e;
+    // clear all the values of the employee struct
+    memset(&e, 0, sizeof(e));
     int key;
     ch;
     printf("\033[0J\033[1;1H\033[0m");
