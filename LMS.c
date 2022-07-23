@@ -32,7 +32,6 @@ exit ${?}
 #include <time.h>
 #include "anisc.h"
 
-
 #define title(k) printf("\033]0;%s\007", k)
 #define ch printf("\033[?25l"); // hiding cursor
 #define cs printf("\033[?25h"); // showing cursor
@@ -61,7 +60,7 @@ void press(int *key)
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     /* referenced from https://stackoverflow.com/questions/8101079/making-stdin-non-blocking*/
     // to handel single key stroke at a time as linux/unix terminal won't allow by default due to canonical mode
-    // code between '//||' is from stackoverflow
+    // stackoverflow code
     struct timeval tv;
     struct termios ttystate, ttysave;
     tcgetattr(STDIN_FILENO, &ttystate);
@@ -72,8 +71,9 @@ void press(int *key)
     ttystate.c_cc[VMIN] = 1;
     // set the terminal attributes.
     tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
+    //stackoverflow ends
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    // key press to contin
+    // key press to continue
     fflush(stdin);
     ch;
     *key = getchar();
@@ -85,13 +85,13 @@ void press(int *key)
     ttystate.c_lflag |= ICANON | ECHO;
     // set the terminal attributes.
     tcsetattr(STDIN_FILENO, TCSANOW, &ttysave);
+    //stackoveflow ends
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 }
 #endif
 
 // referenced from  https://en.wikipedia.org/wiki/ANSI_escape_code
 // title of the program using ANSI escape code
-
 
 struct employe
 {
@@ -617,7 +617,7 @@ void display_employee_screen()
     title("EMPLOYEE ADD SCREEN");
     // initialize empty employee struct
     struct employe e;
-    // clear all the values of the employee struct 
+    // clear all the values of the employee struct
     // just clear out the memory this is is quickest
     memset(&e, 0, sizeof(e));
     int key;
