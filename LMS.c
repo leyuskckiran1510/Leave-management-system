@@ -751,8 +751,12 @@ void calander()
     char c[20];
     int placex = 10;
     int placey = 30;
-    int start_day = 1,tick = 0;
+    long int month = 0;
+    int start_day = 1, tick = 0;
     int month_days[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    // declare all the variables
+    int current_day = 0, current_month = 0, current_year = 0, current_week = 0, current_weekday = 0, key = 0;
+    time_t current_date;
     char *week[7] = {
         "SUN",
         "MON",
@@ -762,49 +766,50 @@ void calander()
         "FRI",
         "SAT"};
     char *holidays[60] = {
-        "Casual Leave",
-        "Annual Leave",
-        "Sick Leave",
-        "Breverity Leave",
-        "Maternity Leave",
-        "Paternity Leave",
-        "Marriage Leave",
-        "Saturday Leave",
+        "Casual ",
+        "Annual",
+        "Sick ",
+        "Breverity ",
+        "Maternity",
+        "Paternity",
+        "Marriage ",
+        "Saturday",
     };
     int colors[9][3] = {
         {254, 125, 67},
         {139, 255, 92},
         {254, 222, 92},
-        {244, 244, 244},
+        {255, 244, 44},
         {255, 38, 203},
-        {255, 38, 203},
+        {255, 50, 203},
         {179, 36, 144},
-        {255, 67, 44},
+        {255,30,30},
     };
-    time_t current_date_f = time(NULL);
-    int current_day_f = localtime(&current_date_f)->tm_mday;
-    fp = fopen("calander.txt", "r");
+
     if (fp == NULL)
     {
         printf("Error opening file!\n");
-        //exit(1);
+        return;
     }
-    //calculate the first weekday of the month
-    time_t  current_date = time(NULL)-(86400*(current_day_f-1));
-    int current_month = localtime(&current_date)->tm_mon + 1;
-    int current_year = localtime(&current_date)->tm_year + 1900;
-    int current_day = localtime(&current_date)->tm_mday;
-    int current_weekday = localtime(&current_date)->tm_wday;
-    int current_week = localtime(&current_date)->tm_yday / 7;
+// calculate the first weekday of the month
+change:
+    current_date = time(NULL)+ (month);
+    current_day = localtime(&current_date)->tm_mday;
+    placex = 10;
+    placey = 30;
+    current_date = time(NULL) - (86400 * (current_day - 1)) + (month);
+    current_month = localtime(&current_date)->tm_mon + 1;
+    current_year = localtime(&current_date)->tm_year + 1900;
+    current_day = localtime(&current_date)->tm_mday;
+    current_weekday = localtime(&current_date)->tm_wday;
+    current_week = localtime(&current_date)->tm_yday / 7;
     start_day = localtime(&current_date)->tm_wday;
     printf("\033[1J");
-    //printf("%s %d \n",week[start_day%6],start_day);
-    
-    //make calander of current month
-    sprintf(c,"mkdir ./%d/%d",current_year,current_month);
-    strcat(c,".txt");
-    system(c);
-    fp = fopen("./2022/7.txt", "w");
+
+    // make calander of current month in new year.txt file
+    sprintf(c, "%d", current_year);
+    strcat(c, ".txt");
+    fp = fopen(c, "w");
     for (int i = 0; i < 7; i++)
     {
         printf("\033[1;32m\033[%d;%dH%s", placex - 2, placey + i * 5, week[i]);
@@ -814,19 +819,60 @@ void calander()
         }
         // placey+=10;
     }
-    //printf("Month:%d Year:%d Day:%d WeekDay:%s Week:%d\n",current_month,current_year,current_day,week[current_weekday],current_week);
+    printf("\033[%d;%dHHOLIDAY MENU\033[0m",placex-7,placey+5);
+    for (int i =0;i<8;i++){
+        printf("\033[%d;%dH \033[38;2;%d;%d;%dm%s\033[0m", placex - 6, (placey-20) + i * 15,colors[i][0],colors[i][1]
+        ,colors[i][2],holidays[i]);
+
+    }
+    printf("\033[38;2;25;150;255m\033[%d;%dH YEAR:- %d                    MONTH:- %02d", placex - 4, placey, current_year, current_month);
     printf("\033[%d;%dH", placex, placey);
-    tick=start_day;
+    tick = start_day;
     for (int i = 1; i <= month_days[current_month]; i++)
     {
         if (tick % 7 == 0)
         {
-            placex ++;
-            tick=0;
+            placex++;
+            tick = 0;
+            printf("\033[38;2;255;255;255m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
+           
         }
-        printf("\033[38;2;255;255;255m\033[%d;%dH%d \x1b[0m", placex, placey+5*tick,i);
-        tick++;
+        else if(tick==6){
+             printf("\033[38;2;255;30;30m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
+        }
+        else{
+        printf("\033[38;2;255;255;255m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
         
+        }
+        tick++;
+    }
+    press(&key);
+    if (key == 'p')
+    {
+        month -= 86400 * month_days[current_month-1];
+        goto change;
+    }
+    else if (key == 'n')
+    {
+        month += 86400 * month_days[current_month+1];
+        goto change;
+    }
+    else if(key=='a'){
+        //add_event();
+    }
+    else if(key=='d'){
+        //delete_event();
+    }
+    else if(key=='h'){
+       // holiday();
+    }
+    else if (key == 'q')
+    {
+        return;
+    }
+    else
+    {
+        goto change;
     }
 }
 
