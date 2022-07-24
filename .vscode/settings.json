@@ -3,6 +3,7 @@
         "anisc.h": "c",
         "string.h": "c",
         "types.h": "c",
-        "termios.h": "c"
+        "termios.h": "c",
+        "stdlib.h": "c"
     }
 }

@@ -30,6 +30,7 @@ exit ${?}
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 #include "anisc.h"
 
 #define title(k) printf("\033]0;%s\007", k)
@@ -71,9 +72,9 @@ void press(int *key)
     ttystate.c_cc[VMIN] = 1;
     // set the terminal attributes.
     tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
-    //stackoverflow ends
+    // stackoverflow ends
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    // key press to continue
+    //  key press to continue
     fflush(stdin);
     ch;
     *key = getchar();
@@ -85,7 +86,7 @@ void press(int *key)
     ttystate.c_lflag |= ICANON | ECHO;
     // set the terminal attributes.
     tcsetattr(STDIN_FILENO, TCSANOW, &ttysave);
-    //stackoveflow ends
+    // stackoveflow ends
     //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 }
 #endif
@@ -158,19 +159,36 @@ int login(char *username, char *password)
         {
             fclose(fp);
             printf("\033[10;50H\033[6;38;250;255;50;255mLOGIN SUCESSFULLY\033[0m\n");
+            // convert the user type to lower case
+            char *type = e.type;
+            for (int i = 0; i < strlen(type); i++)
+            {
+                type[i] = tolower(type[i]);
+            }
+            strcpy(e.type, type);
             if (strcmp(e.type, "admin") == 0)
+            {
                 return 149;
+            }
             else if (strcmp(e.type, "manager") == 0)
+            {
                 return 150;
-            else
+            }
+            else if (strcmp(e.type, "employee") == 0)
+            {
                 return 151;
+            }
+            else
+            {
+                return 152;
+            }
         }
     }
     fclose(fp);
     return 148;
 }
 
-void calander()
+void calander_temp()
 {
     // make a calander with the dates of the month
     // the calander is made with the help of the ansice code
@@ -725,6 +743,93 @@ void employee_add_Screen()
     add_employee(e);
 }
 
+// calander
+void calander()
+{
+    title("CALANDER");
+    FILE *fp;
+    char c[20];
+    int placex = 10;
+    int placey = 30;
+    int start_day = 1,tick = 0;
+    int month_days[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    char *week[7] = {
+        "SUN",
+        "MON",
+        "TUE",
+        "WED",
+        "THU",
+        "FRI",
+        "SAT"};
+    char *holidays[60] = {
+        "Casual Leave",
+        "Annual Leave",
+        "Sick Leave",
+        "Breverity Leave",
+        "Maternity Leave",
+        "Paternity Leave",
+        "Marriage Leave",
+        "Saturday Leave",
+    };
+    int colors[9][3] = {
+        {254, 125, 67},
+        {139, 255, 92},
+        {254, 222, 92},
+        {244, 244, 244},
+        {255, 38, 203},
+        {255, 38, 203},
+        {179, 36, 144},
+        {255, 67, 44},
+    };
+    time_t current_date_f = time(NULL);
+    int current_day_f = localtime(&current_date_f)->tm_mday;
+    fp = fopen("calander.txt", "r");
+    if (fp == NULL)
+    {
+        printf("Error opening file!\n");
+        //exit(1);
+    }
+    //calculate the first weekday of the month
+    time_t  current_date = time(NULL)-(86400*(current_day_f-1));
+    int current_month = localtime(&current_date)->tm_mon + 1;
+    int current_year = localtime(&current_date)->tm_year + 1900;
+    int current_day = localtime(&current_date)->tm_mday;
+    int current_weekday = localtime(&current_date)->tm_wday;
+    int current_week = localtime(&current_date)->tm_yday / 7;
+    start_day = localtime(&current_date)->tm_wday;
+    printf("\033[1J");
+    //printf("%s %d \n",week[start_day%6],start_day);
+    
+    //make calander of current month
+    sprintf(c,"mkdir ./%d/%d",current_year,current_month);
+    strcat(c,".txt");
+    system(c);
+    fp = fopen("./2022/7.txt", "w");
+    for (int i = 0; i < 7; i++)
+    {
+        printf("\033[1;32m\033[%d;%dH%s", placex - 2, placey + i * 5, week[i]);
+        if (i == 6)
+        {
+            printf("\033[38;2;220;255;20m\033[48;2;255;30;30m\033[%d;%dH%s  \x1b[0m", placex - 2, placey + i * 5, week[i]);
+        }
+        // placey+=10;
+    }
+    //printf("Month:%d Year:%d Day:%d WeekDay:%s Week:%d\n",current_month,current_year,current_day,week[current_weekday],current_week);
+    printf("\033[%d;%dH", placex, placey);
+    tick=start_day;
+    for (int i = 1; i <= month_days[current_month]; i++)
+    {
+        if (tick % 7 == 0)
+        {
+            placex ++;
+            tick=0;
+        }
+        printf("\033[38;2;255;255;255m\033[%d;%dH%d \x1b[0m", placex, placey+5*tick,i);
+        tick++;
+        
+    }
+}
+
 // employee modifying Screen
 int modify_employee_screen()
 {
@@ -903,6 +1008,9 @@ int main()
 {
     setupConsole();
     // hide cursor
+    calander();
+    restoreConsole();
+    exit(0);
     ch;
     printf("\x1b[?25l");
     char name[50];
