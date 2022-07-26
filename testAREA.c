@@ -12,7 +12,7 @@ exit ${?}
 struct leaves
 {
     char id[50];
-    int lv[12][10];
+    int lv[12][5];
 };
 
 struct employe

@@ -112,7 +112,13 @@ struct employe
 struct leaves
 {
     char id[50];
-    long int date;
+    int lv[12][5][2];
+    int pend;
+};
+
+struct holiday
+{
+    int day[12][5];
 };
 
 // search engine for the employee id
@@ -489,7 +495,7 @@ char *epoch_to_date(int epoch)
     date = ctime(&t);
     return date;
 }
-
+/*
 // display employee details and leaves of the employee with the employee id
 void display_employee_leaves(char *id)
 {
@@ -537,7 +543,7 @@ void display_employee_leaves(char *id)
 void display_leaves()
 {
 }
-
+*/
 void gen_id(struct employe *b)
 {
     // take current time in epoch format and attach employye name to it
@@ -744,7 +750,7 @@ void employee_add_Screen()
 }
 
 // calander
-void calander()
+void calander_edit()
 {
     title("CALANDER");
     FILE *fp;
@@ -756,6 +762,9 @@ void calander()
     int month_days[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     // declare all the variables
     int current_day = 0, current_month = 0, current_year = 0, current_week = 0, current_weekday = 0, key = 0;
+    struct holiday h;
+    struct leaves l;
+    struct employe e;
     time_t current_date;
     char *week[7] = {
         "SUN",
@@ -773,7 +782,7 @@ void calander()
         "Maternity",
         "Paternity",
         "Marriage ",
-        "Saturday",
+        "Holiday",
     };
     int colors[9][3] = {
         {254, 125, 67},
@@ -783,7 +792,7 @@ void calander()
         {255, 38, 203},
         {255, 50, 203},
         {179, 36, 144},
-        {255,30,30},
+        {255, 30, 30},
     };
 
     if (fp == NULL)
@@ -793,7 +802,7 @@ void calander()
     }
 // calculate the first weekday of the month
 change:
-    current_date = time(NULL)+ (month);
+    current_date = time(NULL) + (month);
     current_day = localtime(&current_date)->tm_mday;
     placex = 10;
     placey = 30;
@@ -809,7 +818,9 @@ change:
     // make calander of current month in new year.txt file
     sprintf(c, "%d", current_year);
     strcat(c, ".txt");
-    fp = fopen(c, "w");
+    fp = fopen(c, "r");
+    memset(&h, 0, sizeof(h));
+    //--------------------------------------------
     for (int i = 0; i < 7; i++)
     {
         printf("\033[1;32m\033[%d;%dH%s", placex - 2, placey + i * 5, week[i]);
@@ -819,52 +830,103 @@ change:
         }
         // placey+=10;
     }
-    printf("\033[%d;%dHHOLIDAY MENU\033[0m",placex-7,placey+5);
-    for (int i =0;i<8;i++){
-        printf("\033[%d;%dH \033[38;2;%d;%d;%dm%s\033[0m", placex - 6, (placey-20) + i * 15,colors[i][0],colors[i][1]
-        ,colors[i][2],holidays[i]);
-
+    printf("\033[%d;%dHHOLIDAY MENU\033[0m", placex - 7, placey + 5);
+    for (int i = 0; i < 8; i++)
+    {
+        printf("\033[%d;%dH \033[38;2;%d;%d;%dm%s\033[0m", placex - 6, (placey - 20) + i * 15, colors[i][0], colors[i][1], colors[i][2], holidays[i]);
     }
     printf("\033[38;2;25;150;255m\033[%d;%dH YEAR:- %d                    MONTH:- %02d", placex - 4, placey, current_year, current_month);
     printf("\033[%d;%dH", placex, placey);
+    //--------------------------------------------
+    fread(&h, sizeof(h), 1, fp);
+    fclose(fp);
     tick = start_day;
     for (int i = 1; i <= month_days[current_month]; i++)
     {
         if (tick % 7 == 0)
         {
-            placex++;
-            tick = 0;
+            if (h.day[current_month][0] == i || h.day[current_month][1] == i || h.day[current_month][2] == i || h.day[current_month][3] == i || h.day[current_month][4] == i)
+            {
+                placex++;
+                tick = 0;
+                printf("\033[38;2;255;30;30m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
+            }
+            else
+            {
+                placex++;
+                tick = 0;
+                printf("\033[38;2;255;255;255m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
+            }
+        }
+        else if (h.day[current_month][0] == i || h.day[current_month][1] == i || h.day[current_month][2] == i || h.day[current_month][3] == i || h.day[current_month][4] == i)
+        {
+            printf("\033[38;2;255;30;30m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
+        }
+        else if (tick == 6)
+        {
+            printf("\033[38;2;255;30;30m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
+        }
+        else
+        {
             printf("\033[38;2;255;255;255m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
-           
-        }
-        else if(tick==6){
-             printf("\033[38;2;255;30;30m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
-        }
-        else{
-        printf("\033[38;2;255;255;255m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
-        
         }
         tick++;
     }
     press(&key);
     if (key == 'p')
     {
-        month -= 86400 * month_days[current_month-1];
+        month -= 86400 * month_days[current_month - 1];
         goto change;
     }
     else if (key == 'n')
     {
-        month += 86400 * month_days[current_month+1];
+        month += 86400 * month_days[current_month + 1];
         goto change;
     }
-    else if(key=='a'){
-        //add_event();
+    else if (key == 'a')
+    {
+        fp = fopen(c, "w");
+        printf("\033[1;32m\033[%d;%dHEnter the day:-  ", placex+7, placey + 5 * tick);
+        // count values of h
+        int count = 0;
+        for (int i = 0; i < 12; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                if (h.day[i][j] > 0 && h.day[i][j] < 31)
+                {
+                    count++;
+                }
+            }
+        }
+        scanf("%d", &h.day[current_month][count % 5]);
+        printf("\033[1;32m\033[%d;%dH                                ", placex+7, placey + 4 * tick);
+        h.day[current_month][current_day] = h.day[current_month][current_day] % 31;
+        fwrite(&h, sizeof(h), 1, fp);
+        fclose(fp);
+        goto change;
     }
-    else if(key=='d'){
-        //delete_event();
-    }
-    else if(key=='h'){
-       // holiday();
+    else if (key == 'd')
+    {
+        fp = fopen(c, "w");
+        printf("\033[1;32m\033[%d;%dHEnter the day:- ", placex+ 7, placey + 5 * tick);
+        // count values of h
+        int day = 0;
+        scanf("%d", &day);
+        for (int i = 0; i < 12; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                if (h.day[i][j] == day)
+                {
+                    h.day[i][j] = 0;
+                }
+            }
+        }
+        printf("\033[1;32m\033[%d;%dH                                ", placex+7, placey + 4 * tick);
+        fwrite(&h, sizeof(h), 1, fp);
+        fclose(fp);
+        goto change;
     }
     else if (key == 'q')
     {
@@ -1054,7 +1116,7 @@ int main()
 {
     setupConsole();
     // hide cursor
-    calander();
+    calander_edit();
     restoreConsole();
     exit(0);
     ch;
