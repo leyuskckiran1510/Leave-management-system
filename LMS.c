@@ -112,7 +112,7 @@ struct employe
 struct leaves
 {
     char id[50];
-    int lv[12][5][2];
+    int day[12][5][2];
     int pend;
 };
 
@@ -750,10 +750,10 @@ void employee_add_Screen()
 }
 
 // calander
-void calander_edit()
+void calander_edit(int sudo)
 {
     title("CALANDER");
-    FILE *fp;
+    FILE *fp, *fp1;
     char c[20];
     int placex = 10;
     int placey = 30;
@@ -763,7 +763,7 @@ void calander_edit()
     // declare all the variables
     int current_day = 0, current_month = 0, current_year = 0, current_week = 0, current_weekday = 0, key = 0;
     struct holiday h;
-    struct leaves l;
+    struct leaves l, l1;
     struct employe e;
     time_t current_date;
     char *week[7] = {
@@ -794,12 +794,6 @@ void calander_edit()
         {179, 36, 144},
         {255, 30, 30},
     };
-
-    if (fp == NULL)
-    {
-        printf("Error opening file!\n");
-        return;
-    }
 // calculate the first weekday of the month
 change:
     current_date = time(NULL) + (month);
@@ -840,6 +834,23 @@ change:
     //--------------------------------------------
     fread(&h, sizeof(h), 1, fp);
     fclose(fp);
+    memset(&l, 0, sizeof(l));
+    memset(&l1, 0, sizeof(l1));
+    fp = fopen("leave.txt", "r");
+    fp1 = fopen("temp.txt", "w");
+    while(fread(&l, sizeof(l), 1, fp))
+    {
+        if(strcmp(l.id, e.id) == 0)
+        {
+            l1 = l;
+        }
+        fwrite(&l, sizeof(l), 1, fp1);
+    }
+    fclose(fp);
+    fclose(fp1);
+    remove("leave.txt");
+    rename("temp.txt", "leave.txt");
+
     tick = start_day;
     for (int i = 1; i <= month_days[current_month]; i++)
     {
@@ -870,9 +881,33 @@ change:
         {
             printf("\033[38;2;255;255;255m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
         }
+        //coloring the holidays taken by employee
+        for(int p=0;p<5;p++)
+        {
+            if(l1.day[current_month][p][0]==i && l1.pend==1)
+            {
+                printf("\033[48;2;150;150;150m\033[38;2;10;10;10m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
+            }
+            else if(l1.day[current_month][p][0]==i && l1.pend==-1)
+            {
+                printf("\033[38;2;255;255;255m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
+                l1.day[current_month][p][1]=0;
+                l1.day[current_month][p][0]=0;
+                l1.pend=0;
+            }
+            else if(l1.day[current_month][p][0]==i && l1.pend==0)
+            {
+                printf("\033[38;2;%d;%d;%dm\033[%d;%dH%d \x1b[0m",colors[l1.day[current_month][p][1]][0],colors[l1.day[current_month][p][1]][0]
+                ,colors[l1.day[current_month][p][1]][0] ,placex, placey + 5 * tick, i);
+            }
+            
+        }
         tick++;
     }
     press(&key);
+    fp1=fopen("leave.txt","a");
+    fwrite(&l1,sizeof(l1),1,fp1);
+    fclose(fp1);
     if (key == 'p')
     {
         month -= 86400 * month_days[current_month - 1];
@@ -883,7 +918,7 @@ change:
         month += 86400 * month_days[current_month + 1];
         goto change;
     }
-    else if (key == 'a')
+    else if (key == 'a' && sudo==1 )
     {
         fp = fopen(c, "w");
         printf("\033[1;32m\033[%d;%dHEnter the day:-  ", placex+7, placey + 5 * tick);
@@ -906,7 +941,7 @@ change:
         fclose(fp);
         goto change;
     }
-    else if (key == 'd')
+    else if (key == 'd'  && sudo==1 )
     {
         fp = fopen(c, "w");
         printf("\033[1;32m\033[%d;%dHEnter the day:- ", placex+ 7, placey + 5 * tick);
@@ -926,6 +961,39 @@ change:
         printf("\033[1;32m\033[%d;%dH                                ", placex+7, placey + 4 * tick);
         fwrite(&h, sizeof(h), 1, fp);
         fclose(fp);
+        goto change;
+    }
+    else if (key=='l')
+    {
+        fp = fopen("leave", "a");
+        printf("\033[1;32m\033[%d;%dHEnter the day:- ", placex+ 7, placey + 5 * tick);
+        // count values of h
+        int day = 0,type=0;
+        scanf("%d", &day);
+        printf("\033[1;32m\033[%d;%dHEnter the Type(1->Casual;2->Anal.... ):- ", placex+ 7, placey + 5 * tick);
+        scanf("%d", &type);
+
+        for (int i = 0; i < 12; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                if(e.leaves<=5){
+                    l1.day[current_month][e.leaves][0]=day;
+                    l1.day[current_month][e.leaves][1]=type;
+                    e.leaves++;
+                    l1.pend=1;
+                }
+                else
+                {
+                    printf("\033[1;32m\033[%d;%dHYou have already taken 5 leaves", placex+ 7, placey + 5 * tick);
+                    goto change;
+                }
+            }
+        }
+        printf("\033[1;32m\033[%d;%dH                                ", placex+7, placey + 4 * tick);
+        fwrite(&l1, sizeof(l1), 1, fp);
+        fclose(fp);
+
         goto change;
     }
     else if (key == 'q')
@@ -1116,7 +1184,7 @@ int main()
 {
     setupConsole();
     // hide cursor
-    calander_edit();
+    calander_edit(1);
     restoreConsole();
     exit(0);
     ch;

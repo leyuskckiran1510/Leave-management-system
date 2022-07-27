@@ -72,3 +72,20 @@ int main()
     fclose(fp1);
     return 0;
 }
+
+
+
+/*
+else if ((l1.day[current_month][0][0] == i ||
+        l1.day[current_month][1][0] == i || 
+        l1.day[current_month][2][0]== i || 
+        l1.day[current_month][3][0] == i || 
+        l1.day[current_month][4][0]== i)&&
+        (l1.day[current_month][0][1] == 1||
+        l1.day[current_month][1][1] == 1|| 
+        l1.day[current_month][2][1]== 1|| 
+        l1.day[current_month][3][1] == 1 || 
+        l1.day[current_month][4][1]== 1))
+        {
+            printf("\033[38;2;255;30;30m\033[%d;%dH%d \x1b[0m", placex, placey + 5 * tick, i);
+        }*/
