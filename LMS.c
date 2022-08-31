@@ -750,7 +750,7 @@ void employee_add_Screen()
 }
 
 // calander
-void calander_edit(int sudo)
+void calander_edit(int sudo,char *id)
 {
     title("CALANDER");
     FILE *fp, *fp1;
@@ -765,6 +765,7 @@ void calander_edit(int sudo)
     struct holiday h;
     struct leaves l, l1;
     struct employe e;
+    
     time_t current_date;
     char *week[7] = {
         "SUN",
@@ -905,6 +906,7 @@ change:
         tick++;
     }
     press(&key);
+    strcpy(l1.id,id);
     fp1=fopen("leave.txt","a");
     fwrite(&l1,sizeof(l1),1,fp1);
     fclose(fp1);
@@ -990,6 +992,7 @@ change:
                 }
             }
         }
+          strcpy(l1.id,id);
         printf("\033[1;32m\033[%d;%dH                                ", placex+7, placey + 4 * tick);
         fwrite(&l1, sizeof(l1), 1, fp);
         fclose(fp);
@@ -1184,9 +1187,9 @@ int main()
 {
     setupConsole();
     // hide cursor
-    calander_edit(1);
-    restoreConsole();
-    exit(0);
+    calander_edit(1,"1657632109a");
+   restoreConsole();
+exit(0);
     ch;
     printf("\x1b[?25l");
     char name[50];
@@ -1250,7 +1253,7 @@ int main()
                 else if (key3 == 54)
                 {
                     printf("\033[0J\033[1;1H\033[0m");
-                    calander();
+                    //calander();
                 }
                 else
                 {
@@ -1284,7 +1287,7 @@ int main()
         else if (key1 == 50)
         {
             printf("\033[0J\033[1;1H\033[0m");
-            calander();
+            //calander();
         }
         else if (key1 == 51)
         {
